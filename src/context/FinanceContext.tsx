@@ -14,9 +14,19 @@ export interface Category {
   icon: string;
 }
 
+export interface Account {
+  id: string;
+  profileId: string;
+  name: string;
+  type: "cash" | "bank" | "credit_card" | "investment" | "other";
+  initialBalance: number;
+  currency: string;
+}
+
 export interface Transaction {
   id: string;
   profileId: string;
+  accountId: string; // New: Link transaction to an account
   amount: number;
   date: string;
   description: string;
@@ -109,6 +119,7 @@ interface FinanceContextType {
   transactions: Transaction[];
   categories: Category[];
   bills: Bill[];
+  accounts: Account[]; // New: Accounts state
   baseCurrency: string;
   exchangeRates: ExchangeRate;
   addTransaction: (transaction: Omit<Transaction, "id" | "profileId">) => void;
@@ -120,6 +131,9 @@ interface FinanceContextType {
   addBill: (bill: Omit<Bill, "id" | "profileId">) => void;
   updateBill: (id: string, bill: Partial<Bill>) => void;
   deleteBill: (id: string) => void;
+  addAccount: (account: Omit<Account, "id" | "profileId">) => void; // New: Account functions
+  updateAccount: (id: string, account: Partial<Account>) => void;
+  deleteAccount: (id: string) => void;
   setBaseCurrency: (currency: string) => void;
   convertAmount: (amount: number, fromCurrency: string, toCurrency: string) => number;
   getTotalBalance: () => number;
@@ -154,6 +168,11 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [accounts, setAccounts] = useState<Account[]>(() => {
+    const saved = localStorage.getItem("accounts");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [baseCurrency, setBaseCurrency] = useState<string>(() => {
     return localStorage.getItem("baseCurrency") || "USD";
   });
@@ -174,12 +193,29 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   }, [bills]);
 
   useEffect(() => {
+    localStorage.setItem("accounts", JSON.stringify(accounts));
+  }, [accounts]);
+
+  useEffect(() => {
     localStorage.setItem("baseCurrency", baseCurrency);
   }, [baseCurrency]);
 
   // Filter data by current profile
   const profileTransactions = transactions.filter(t => t.profileId === currentProfileId);
   const profileBills = bills.filter(b => b.profileId === currentProfileId);
+  const profileAccounts = accounts.filter(a => a.profileId === currentProfileId);
+
+  // Ensure a default account exists for the current profile
+  useEffect(() => {
+    if (currentProfileId && profileAccounts.length === 0) {
+      addAccount({
+        name: "Cash",
+        type: "cash",
+        initialBalance: 0,
+        currency: baseCurrency,
+      });
+    }
+  }, [currentProfileId, profileAccounts.length, baseCurrency]); // Depend on baseCurrency to set default account currency
 
   // Transaction functions
   const addTransaction = (transaction: Omit<Transaction, "id" | "profileId">) => {
@@ -187,6 +223,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
       ...transaction,
       id: Date.now().toString(),
       profileId: currentProfileId,
+      accountId: transaction.accountId || (profileAccounts.length > 0 ? profileAccounts[0].id : "default"), // Default to first account if available
     };
     setTransactions([...transactions, newTransaction]);
   };
@@ -250,6 +287,36 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteBill = (id: string) => {
     setBills(bills.filter((bill) => bill.id !== id));
+  };
+
+  // Account functions
+  const addAccount = (account: Omit<Account, "id" | "profileId">) => {
+    const newAccount = {
+      ...account,
+      id: Date.now().toString(),
+      profileId: currentProfileId,
+    };
+    setAccounts([...accounts, newAccount]);
+  };
+
+  const updateAccount = (id: string, updatedAccount: Partial<Account>) => {
+    setAccounts(
+      accounts.map((account) =>
+        account.id === id ? { ...account, ...updatedAccount } : account
+      )
+    );
+  };
+
+  const deleteAccount = (id: string) => {
+    setAccounts(accounts.filter((account) => account.id !== id));
+    // Reassign transactions from deleted account to a default account or null
+    setTransactions(
+      transactions.map((transaction) =>
+        transaction.accountId === id
+          ? { ...transaction, accountId: profileAccounts.length > 0 ? profileAccounts[0].id : "default" } // Reassign to first available or 'default'
+          : transaction
+      )
+    );
   };
 
   // Currency conversion
@@ -406,6 +473,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     const entries: JournalEntry[] = [];
     filteredTransactions.forEach(t => {
       const categoryName = categories.find(c => c.id === t.category)?.name || "Uncategorized";
+      const accountName = profileAccounts.find(a => a.id === t.accountId)?.name || "Unassigned Account";
       const convertedAmount = convertAmount(t.amount, t.currency, baseCurrency);
 
       if (t.type === "income") {
@@ -413,7 +481,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
           id: `${t.id}-debit`,
           date: t.date,
           description: t.description,
-          debitAccount: "Assets: Cash/Bank", // Simplified
+          debitAccount: `Assets: ${accountName}`,
           creditAccount: `Income: ${categoryName}`,
           amount: convertedAmount,
           currency: baseCurrency,
@@ -424,7 +492,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
           date: t.date,
           description: t.description,
           debitAccount: `Expenses: ${categoryName}`,
-          creditAccount: "Assets: Cash/Bank", // Simplified
+          creditAccount: `Assets: ${accountName}`,
           amount: convertedAmount,
           currency: baseCurrency,
         });
@@ -524,21 +592,28 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
       return transactionDate <= endDate;
     });
 
-    let cashBalance = 0;
+    // Calculate current balance for each account
+    const accountBalances: { [accountId: string]: number } = {};
+    profileAccounts.forEach(account => {
+      accountBalances[account.id] = account.initialBalance;
+    });
+
     transactionsUpToEndDate.forEach(t => {
       const convertedAmount = convertAmount(t.amount, t.currency, baseCurrency);
-      if (t.type === "income") {
-        cashBalance += convertedAmount;
-      } else {
-        cashBalance -= convertedAmount;
+      if (accountBalances[t.accountId] !== undefined) { // Only update if account exists
+        if (t.type === "income") {
+          accountBalances[t.accountId] += convertedAmount;
+        } else {
+          accountBalances[t.accountId] -= convertedAmount;
+        }
       }
     });
 
-    // Simplified assets: just cash balance for now
-    const assets = [
-      { name: "Cash & Bank", amount: cashBalance },
-      // Add other assets like investments, property if applicable
-    ];
+    // Assets: Sum of all account balances
+    const assets = profileAccounts.map(account => ({
+      name: account.name,
+      amount: accountBalances[account.id] || 0,
+    }));
     const totalAssets = assets.reduce((sum, asset) => sum + asset.amount, 0);
 
     // Simplified liabilities: outstanding bills
@@ -570,6 +645,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
         transactions: profileTransactions,
         categories,
         bills: profileBills,
+        accounts: profileAccounts, // Provide profile-specific accounts
         baseCurrency,
         exchangeRates,
         addTransaction,
@@ -581,6 +657,9 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
         addBill,
         updateBill,
         deleteBill,
+        addAccount, // Provide account functions
+        updateAccount,
+        deleteAccount,
         setBaseCurrency,
         convertAmount,
         getTotalBalance,

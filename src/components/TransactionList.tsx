@@ -10,7 +10,7 @@ import TransactionForm from "@/components/TransactionForm";
 import { format } from "date-fns";
 
 const TransactionList = () => {
-  const { transactions, categories, deleteTransaction, baseCurrency, convertAmount } = useFinance();
+  const { transactions, categories, accounts, deleteTransaction, baseCurrency, convertAmount } = useFinance();
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
@@ -55,6 +55,7 @@ const TransactionList = () => {
           <div className="space-y-4">
             {sortedTransactions.slice(0, 5).map((transaction) => {
               const category = categories.find(c => c.id === transaction.category);
+              const account = accounts.find(a => a.id === transaction.accountId);
               const convertedAmount = convertAmount(
                 transaction.amount,
                 transaction.currency,
@@ -81,7 +82,7 @@ const TransactionList = () => {
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">{transaction.description}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {format(new Date(transaction.date), 'MMM dd, yyyy')} • {category?.name || 'Uncategorized'}
+                        {format(new Date(transaction.date), 'MMM dd, yyyy')} • {category?.name || 'Uncategorized'} • {account?.name || 'Unassigned'}
                       </p>
                     </div>
                   </div>

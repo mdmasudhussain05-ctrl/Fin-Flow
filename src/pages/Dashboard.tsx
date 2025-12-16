@@ -15,15 +15,10 @@ import {
   BarChart3, 
   CreditCard, 
   User, 
-  Settings,
+  Settings, // Added Settings icon
   Download,
-  Sun,
-  Moon,
-  Wallet,
-  PieChart,
-  Calendar,
-  FileBarChart,
-  Scale, // Added for Financial Statements
+  Scale,
+  Banknote, // Added Banknote icon for accounts
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -39,12 +34,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ProfileSelector } from "@/components/ProfileSelector";
 import { useTheme } from "@/context/ThemeContext";
 import { useProfile } from "@/context/ProfileContext";
+import { useFinance } from "@/context/FinanceContext";
 import { Card } from "@/components/ui/card";
-import FinancialStatements from "@/components/FinancialStatements"; // Import the new component
+import FinancialStatements from "@/components/FinancialStatements";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { AccountManager } from "@/components/AccountManager"; // Import AccountManager
 
 const Dashboard = () => {
   const { theme } = useTheme();
   const { profiles, currentProfileId } = useProfile();
+  const { baseCurrency, setBaseCurrency, exchangeRates } = useFinance();
   const [activeSection, setActiveSection] = useState("dashboard");
   
   const currentProfile = profiles.find(p => p.id === currentProfileId);
@@ -52,11 +52,17 @@ const Dashboard = () => {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "financial-statements", label: "Financial Statements", icon: Scale }, // New menu item
+    { id: "financial-statements", label: "Financial Statements", icon: Scale },
     { id: "cards", label: "Cards", icon: CreditCard },
+    { id: "accounts", label: "Accounts", icon: Banknote }, // New menu item for accounts
     { id: "profile", label: "Profile", icon: User },
     { id: "export", label: "Export", icon: Download },
   ];
+
+  const currencyOptions = Object.keys(exchangeRates).map(currencyCode => ({
+    value: currencyCode,
+    label: currencyCode,
+  }));
 
   const renderContent = () => {
     switch (activeSection) {
@@ -92,10 +98,12 @@ const Dashboard = () => {
             <CategoryManager />
           </div>
         );
-      case "financial-statements": // New case for financial statements
+      case "financial-statements":
         return <FinancialStatements />;
       case "cards":
         return <CardManager />;
+      case "accounts": // New case for AccountManager
+        return <AccountManager />;
       case "profile":
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -131,12 +139,21 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">Mode</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Current theme mode</p>
+                      <h3 className="font-medium text-gray-900 dark:text-white">Base Currency</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Set your primary currency</p>
                     </div>
-                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm font-medium text-gray-900 dark:text-white">
-                      {theme === "dark" ? "Dark" : theme === "light" ? "Light" : "System"}
-                    </span>
+                    <Select value={baseCurrency} onValueChange={setBaseCurrency}>
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencyOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
@@ -185,9 +202,6 @@ const Dashboard = () => {
               <SheetContent side="left">
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-2">
-                    <div className="bg-gradient-to-r from-teal-500 to-cyan-600 w-8 h-8 rounded-lg flex items-center justify-center">
-                      <Wallet className="h-5 w-5 text-white" />
-                    </div>
                     FinFlow
                   </SheetTitle>
                 </SheetHeader>
@@ -222,9 +236,6 @@ const Dashboard = () => {
         {/* Desktop Sidebar */}
         <div className="hidden md:block w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 rounded-l-2xl p-4 h-[calc(100vh-2rem)] sticky top-4">
           <div className="flex items-center mb-8">
-            <div className="bg-gradient-to-r from-teal-500 to-cyan-600 w-10 h-10 rounded-xl flex items-center justify-center">
-              <Wallet className="h-6 w-6 text-white" />
-            </div>
             <h1 className="text-xl font-bold ml-3">FinFlow</h1>
           </div>
           

@@ -18,78 +18,72 @@ export function ExportManager() {
   const exportToExcel = () => {
     setIsExporting(true);
     
-    // In a real app, this would generate an actual Excel file
-    // For now, we'll simulate the process
-    setTimeout(() => {
-      const data = transactions.map(t => ({
-        Date: t.date,
-        Description: t.description,
-        Category: categories.find(c => c.id === t.category)?.name || "Uncategorized",
-        Type: t.type,
-        Amount: `${t.currency} ${t.amount.toFixed(2)}`,
-        ConvertedAmount: `${baseCurrency} ${(
-          t.amount * (t.currency === baseCurrency ? 1 : 1) // Simplified conversion
-        ).toFixed(2)}`
-      }));
-      
-      // Create CSV content
-      const headers = Object.keys(data[0] || {});
-      const csvContent = [
-        headers.join(","),
-        ...data.map(row => headers.map(header => `"${row[header as keyof typeof row]}"`).join(","))
-      ].join("\n");
-      
-      // Create download link
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `finflow-export-${format(new Date(), "yyyy-MM-dd")}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      setIsExporting(false);
-    }, 1000);
+    const data = transactions.map(t => ({
+      Date: t.date,
+      Description: t.description,
+      Category: categories.find(c => c.id === t.category)?.name || "Uncategorized",
+      Type: t.type,
+      Amount: `${t.currency} ${t.amount.toFixed(2)}`,
+      ConvertedAmount: `${baseCurrency} ${(
+        t.amount * (t.currency === baseCurrency ? 1 : 1) // Simplified conversion
+      ).toFixed(2)}`
+    }));
+    
+    // Create CSV content
+    const headers = Object.keys(data[0] || {});
+    const csvContent = [
+      headers.join(","),
+      ...data.map(row => headers.map(header => `"${row[header as keyof typeof row]}"`).join(","))
+    ].join("\n");
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `finflow-transactions-export-${format(new Date(), "yyyy-MM-dd")}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setIsExporting(false);
   };
 
   const exportToPDF = () => {
     setIsExporting(true);
     
-    // In a real app, this would generate an actual PDF
-    // For now, we'll simulate the process
-    setTimeout(() => {
-      // Create a simple text report
-      const report = `
+    // Create a simple text report
+    const report = `
 FinFlow Financial Report
 Generated on: ${format(new Date(), "PPP")}
 Profile: ${currentProfile?.name || "Unknown"}
+Base Currency: ${baseCurrency}
 
-Transactions:
-${transactions.map(t => 
-  `${t.date} - ${t.description} - ${t.type}: ${t.currency} ${t.amount.toFixed(2)}`
-).join("\n")}
+--- Transactions ---
+${transactions.length > 0 ? transactions.map(t => {
+  const categoryName = categories.find(c => c.id === t.category)?.name || "Uncategorized";
+  return `${format(new Date(t.date), 'yyyy-MM-dd')} | ${t.description.padEnd(30).substring(0, 30)} | ${t.type.padEnd(7)} | ${categoryName.padEnd(15)} | ${t.currency} ${t.amount.toFixed(2)}`;
+}).join("\n") : "No transactions recorded."}
 
-Bills:
-${bills.map(b => 
-  `${b.name} - Due: ${b.dueDate} - Amount: ${b.currency} ${b.amount.toFixed(2)} - ${b.isPaid ? "Paid" : "Unpaid"}`
-).join("\n")}
-      `.trim();
-      
-      // Create download link
-      const blob = new Blob([report], { type: "text/plain;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `finflow-report-${format(new Date(), "yyyy-MM-dd")}.txt`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      setIsExporting(false);
-    }, 1000);
+--- Recurring Bills ---
+${bills.length > 0 ? bills.map(b => 
+  `${format(new Date(b.dueDate), 'yyyy-MM-dd')} | ${b.name.padEnd(30).substring(0, 30)} | ${b.currency} ${b.amount.toFixed(2)} | ${b.isPaid ? "Paid" : "Unpaid"}`
+).join("\n") : "No recurring bills recorded."}
+    `.trim();
+    
+    // Create download link
+    const blob = new Blob([report], { type: "text/plain;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `finflow-report-${format(new Date(), "yyyy-MM-dd")}.txt`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setIsExporting(false);
   };
 
   return (
@@ -105,7 +99,7 @@ ${bills.map(b =>
             className="flex-1"
           >
             <FileSpreadsheet className="h-5 w-5 mr-2" />
-            Export to Excel
+            Export to Excel (CSV)
           </Button>
           <Button 
             onClick={exportToPDF} 
@@ -114,7 +108,7 @@ ${bills.map(b =>
             className="flex-1"
           >
             <FileText className="h-5 w-5 mr-2" />
-            Export to PDF
+            Export to PDF (Text)
           </Button>
         </div>
         
@@ -123,15 +117,15 @@ ${bills.map(b =>
           <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
             <li className="flex items-center">
               <FileBarChart className="h-4 w-4 mr-2 text-teal-500" />
-              Include charts and visualizations
+              Exports transactions and bills data.
             </li>
             <li className="flex items-center">
               <FileSpreadsheet className="h-4 w-4 mr-2 text-blue-500" />
-              Export in multiple formats (CSV, XLSX)
+              CSV format is compatible with Excel and other spreadsheet software.
             </li>
             <li className="flex items-center">
               <FileText className="h-4 w-4 mr-2 text-red-500" />
-              Generate detailed financial reports
+              PDF export provides a simple text-based summary.
             </li>
           </ul>
         </div>

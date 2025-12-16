@@ -14,7 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useFinance } from "@/context/FinanceContext";
 import { Transaction, TransactionType } from "@/context/FinanceContext";
-import { X, Wallet, Calendar, FileText, Tag, DollarSign } from "lucide-react";
+import { X, Wallet, Calendar, FileText, Tag, DollarSign, Banknote } from "lucide-react"; // Added Banknote icon
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -23,28 +23,30 @@ interface TransactionFormProps {
 }
 
 const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProps) => {
-  const { categories, addTransaction, updateTransaction } = useFinance();
+  const { categories, accounts, addTransaction, updateTransaction, baseCurrency, exchangeRates } = useFinance();
   const [amount, setAmount] = useState(transaction?.amount?.toString() || "");
   const [date, setDate] = useState(transaction?.date || new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState(transaction?.description || "");
   const [type, setType] = useState<TransactionType>(transaction?.type || "expense");
   const [category, setCategory] = useState(transaction?.category || "");
-  const [currency, setCurrency] = useState(transaction?.currency || "USD");
+  const [currency, setCurrency] = useState(transaction?.currency || baseCurrency);
+  const [accountId, setAccountId] = useState(transaction?.accountId || (accounts.length > 0 ? accounts[0].id : ""));
 
-  const currencyOptions = [
-    { value: "USD", label: "USD - US Dollar" },
-    { value: "EUR", label: "EUR - Euro" },
-    { value: "GBP", label: "GBP - British Pound" },
-    { value: "JPY", label: "JPY - Japanese Yen" },
-    { value: "INR", label: "INR - Indian Rupee" },
-    { value: "CAD", label: "CAD - Canadian Dollar" },
-    { value: "AUD", label: "AUD - Australian Dollar" },
-  ];
+  useEffect(() => {
+    if (accounts.length > 0 && !accountId) {
+      setAccountId(accounts[0].id); // Set default account if none selected
+    }
+  }, [accounts, accountId]);
+
+  const currencyOptions = Object.keys(exchangeRates).map(currencyCode => ({
+    value: currencyCode,
+    label: currencyCode,
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || !date || !description || !category || !currency) {
+    if (!amount || !date || !description || !category || !currency || !accountId) {
       alert("Please fill all fields");
       return;
     }
@@ -56,6 +58,7 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
       type,
       category,
       currency,
+      accountId, // Include accountId
     };
 
     if (transaction) {
@@ -191,6 +194,25 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
                       <span className={`w-3 h-3 rounded-full ${cat.color} mr-2`}></span>
                       {cat.name}
                     </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="account" className="flex items-center">
+              <Banknote className="h-4 w-4 mr-2 text-teal-500" />
+              Account
+            </Label>
+            <Select value={accountId} onValueChange={setAccountId}>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select account" />
+              </SelectTrigger>
+              <SelectContent>
+                {accounts.map((acc) => (
+                  <SelectItem key={acc.id} value={acc.id}>
+                    {acc.name} ({acc.currency})
                   </SelectItem>
                 ))}
               </SelectContent>
