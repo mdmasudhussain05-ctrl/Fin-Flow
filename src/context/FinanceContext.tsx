@@ -287,14 +287,6 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteBill = (id: string) => {
     setBills(bills.filter((bill) => bill.id !== id));
-    // Reassign transactions from deleted account to a default account or null
-    setTransactions(
-      transactions.map((transaction) =>
-        transaction.accountId === id
-          ? { ...transaction, accountId: profileAccounts.length > 0 ? profileAccounts[0].id : "default" } // Reassign to first available or 'default'
-          : transaction
-      )
-    );
   };
 
   // Account functions
