@@ -9,6 +9,7 @@ import { FinanceProvider } from "./context/FinanceContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import AddTransaction from "./pages/AddTransaction";
+import Index from "./pages/Index"; // Import the Index page
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Index />} /> {/* Changed to Index */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/add-transaction" element={<AddTransaction />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
