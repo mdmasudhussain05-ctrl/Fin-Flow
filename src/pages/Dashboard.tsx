@@ -22,7 +22,8 @@ import {
   Wallet,
   PieChart,
   Calendar,
-  FileBarChart
+  FileBarChart,
+  Scale, // Added for Financial Statements
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -39,6 +40,7 @@ import { ProfileSelector } from "@/components/ProfileSelector";
 import { useTheme } from "@/context/ThemeContext";
 import { useProfile } from "@/context/ProfileContext";
 import { Card } from "@/components/ui/card";
+import FinancialStatements from "@/components/FinancialStatements"; // Import the new component
 
 const Dashboard = () => {
   const { theme } = useTheme();
@@ -50,6 +52,7 @@ const Dashboard = () => {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "financial-statements", label: "Financial Statements", icon: Scale }, // New menu item
     { id: "cards", label: "Cards", icon: CreditCard },
     { id: "profile", label: "Profile", icon: User },
     { id: "export", label: "Export", icon: Download },
@@ -89,6 +92,8 @@ const Dashboard = () => {
             <CategoryManager />
           </div>
         );
+      case "financial-statements": // New case for financial statements
+        return <FinancialStatements />;
       case "cards":
         return <CardManager />;
       case "profile":

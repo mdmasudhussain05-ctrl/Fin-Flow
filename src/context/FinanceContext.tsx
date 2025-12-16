@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useProfile } from "./ProfileContext";
+import { format, getMonth, getYear, endOfMonth, startOfMonth, addMonths, isPast, isAfter, subMonths, subYears, startOfYear, endOfYear } from "date-fns";
 
 // Types
 export type TransactionType = "income" | "expense";
@@ -36,6 +37,49 @@ export interface Bill {
 
 export interface ExchangeRate {
   [key: string]: number;
+}
+
+// New types for financial statements
+export interface JournalEntry {
+  id: string;
+  date: string;
+  description: string;
+  debitAccount: string;
+  creditAccount: string;
+  amount: number;
+  currency: string;
+}
+
+export interface LedgerEntry {
+  date: string;
+  description: string;
+  type: "debit" | "credit";
+  amount: number;
+  balance: number;
+}
+
+export interface LedgerAccount {
+  name: string;
+  entries: LedgerEntry[];
+  finalBalance: number;
+}
+
+export interface ProfitLossAccount {
+  period: string;
+  totalIncome: number;
+  totalExpenses: number;
+  netProfitLoss: number;
+  incomeBreakdown: { category: string; amount: number }[];
+  expenseBreakdown: { category: string; amount: number }[];
+}
+
+export interface BalanceSheet {
+  date: string;
+  assets: { name: string; amount: number }[];
+  totalAssets: number;
+  liabilities: { name: string; amount: number }[];
+  totalLiabilities: number;
+  equity: number;
 }
 
 // Default categories
@@ -83,6 +127,11 @@ interface FinanceContextType {
   getMonthlyExpenses: () => number;
   getTransactionsByMonth: (months: number) => { income: number; expenses: number; month: string }[];
   getExpensesByCategory: () => { name: string; value: number; color: string }[];
+  // New financial statement functions
+  getJournalEntries: (startDate: Date, endDate: Date) => JournalEntry[];
+  getLedgerAccounts: (startDate: Date, endDate: Date) => { [accountName: string]: LedgerAccount };
+  getProfitLossAccount: (startDate: Date, endDate: Date) => ProfitLossAccount;
+  getBalanceSheet: (endDate: Date) => BalanceSheet;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
@@ -346,6 +395,175 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // --- Financial Statement Generation Functions ---
+
+  const getJournalEntries = (startDate: Date, endDate: Date): JournalEntry[] => {
+    const filteredTransactions = profileTransactions.filter(t => {
+      const transactionDate = new Date(t.date);
+      return transactionDate >= startDate && transactionDate <= endDate;
+    });
+
+    const entries: JournalEntry[] = [];
+    filteredTransactions.forEach(t => {
+      const categoryName = categories.find(c => c.id === t.category)?.name || "Uncategorized";
+      const convertedAmount = convertAmount(t.amount, t.currency, baseCurrency);
+
+      if (t.type === "income") {
+        entries.push({
+          id: `${t.id}-debit`,
+          date: t.date,
+          description: t.description,
+          debitAccount: "Assets: Cash/Bank", // Simplified
+          creditAccount: `Income: ${categoryName}`,
+          amount: convertedAmount,
+          currency: baseCurrency,
+        });
+      } else { // expense
+        entries.push({
+          id: `${t.id}-credit`,
+          date: t.date,
+          description: t.description,
+          debitAccount: `Expenses: ${categoryName}`,
+          creditAccount: "Assets: Cash/Bank", // Simplified
+          amount: convertedAmount,
+          currency: baseCurrency,
+        });
+      }
+    });
+    return entries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  };
+
+  const getLedgerAccounts = (startDate: Date, endDate: Date): { [accountName: string]: LedgerAccount } => {
+    const journalEntries = getJournalEntries(startDate, endDate);
+    const ledger: { [accountName: string]: LedgerAccount } = {};
+
+    const addEntryToLedger = (accountName: string, entry: LedgerEntry) => {
+      if (!ledger[accountName]) {
+        ledger[accountName] = { name: accountName, entries: [], finalBalance: 0 };
+      }
+      ledger[accountName].entries.push(entry);
+    };
+
+    journalEntries.forEach(je => {
+      // Debit entry
+      addEntryToLedger(je.debitAccount, {
+        date: je.date,
+        description: je.description,
+        type: "debit",
+        amount: je.amount,
+        balance: 0, // Will calculate later
+      });
+
+      // Credit entry
+      addEntryToLedger(je.creditAccount, {
+        date: je.date,
+        description: je.description,
+        type: "credit",
+        amount: je.amount,
+        balance: 0, // Will calculate later
+      });
+    });
+
+    // Calculate running balances and final balances
+    for (const accountName in ledger) {
+      let currentBalance = 0;
+      ledger[accountName].entries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      ledger[accountName].entries.forEach(entry => {
+        if (entry.type === "debit") {
+          currentBalance += entry.amount;
+        } else {
+          currentBalance -= entry.amount;
+        }
+        entry.balance = currentBalance;
+      });
+      ledger[accountName].finalBalance = currentBalance;
+    }
+
+    return ledger;
+  };
+
+  const getProfitLossAccount = (startDate: Date, endDate: Date): ProfitLossAccount => {
+    const filteredTransactions = profileTransactions.filter(t => {
+      const transactionDate = new Date(t.date);
+      return transactionDate >= startDate && transactionDate <= endDate;
+    });
+
+    let totalIncome = 0;
+    let totalExpenses = 0;
+    const incomeBreakdown: { [key: string]: number } = {};
+    const expenseBreakdown: { [key: string]: number } = {};
+
+    filteredTransactions.forEach(t => {
+      const convertedAmount = convertAmount(t.amount, t.currency, baseCurrency);
+      const categoryName = categories.find(c => c.id === t.category)?.name || "Uncategorized";
+
+      if (t.type === "income") {
+        totalIncome += convertedAmount;
+        incomeBreakdown[categoryName] = (incomeBreakdown[categoryName] || 0) + convertedAmount;
+      } else {
+        totalExpenses += convertedAmount;
+        expenseBreakdown[categoryName] = (expenseBreakdown[categoryName] || 0) + convertedAmount;
+      }
+    });
+
+    const netProfitLoss = totalIncome - totalExpenses;
+
+    return {
+      period: `${format(startDate, 'MMM yyyy')} - ${format(endDate, 'MMM yyyy')}`,
+      totalIncome,
+      totalExpenses,
+      netProfitLoss,
+      incomeBreakdown: Object.entries(incomeBreakdown).map(([category, amount]) => ({ category, amount })),
+      expenseBreakdown: Object.entries(expenseBreakdown).map(([category, amount]) => ({ category, amount })),
+    };
+  };
+
+  const getBalanceSheet = (endDate: Date): BalanceSheet => {
+    const transactionsUpToEndDate = profileTransactions.filter(t => {
+      const transactionDate = new Date(t.date);
+      return transactionDate <= endDate;
+    });
+
+    let cashBalance = 0;
+    transactionsUpToEndDate.forEach(t => {
+      const convertedAmount = convertAmount(t.amount, t.currency, baseCurrency);
+      if (t.type === "income") {
+        cashBalance += convertedAmount;
+      } else {
+        cashBalance -= convertedAmount;
+      }
+    });
+
+    // Simplified assets: just cash balance for now
+    const assets = [
+      { name: "Cash & Bank", amount: cashBalance },
+      // Add other assets like investments, property if applicable
+    ];
+    const totalAssets = assets.reduce((sum, asset) => sum + asset.amount, 0);
+
+    // Simplified liabilities: outstanding bills
+    const outstandingBills = profileBills.filter(bill => !bill.isPaid && new Date(bill.dueDate) <= endDate);
+    const totalOutstandingBills = outstandingBills.reduce((sum, bill) => 
+      sum + convertAmount(bill.amount, bill.currency, baseCurrency), 0);
+
+    const liabilities = [
+      { name: "Outstanding Bills", amount: totalOutstandingBills },
+      // Add other liabilities like loans, credit card debt
+    ];
+    const totalLiabilities = liabilities.reduce((sum, liability) => sum + liability.amount, 0);
+
+    const equity = totalAssets - totalLiabilities;
+
+    return {
+      date: format(endDate, 'PPP'),
+      assets,
+      totalAssets,
+      liabilities,
+      totalLiabilities,
+      equity,
+    };
+  };
+
   return (
     <FinanceContext.Provider
       value={{
@@ -370,6 +588,10 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
         getMonthlyExpenses,
         getTransactionsByMonth,
         getExpensesByCategory,
+        getJournalEntries,
+        getLedgerAccounts,
+        getProfitLossAccount,
+        getBalanceSheet,
       }}
     >
       {children}
