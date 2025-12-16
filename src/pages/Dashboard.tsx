@@ -20,6 +20,7 @@ import {
   Scale,
   Banknote, 
   DollarSign, 
+  Plus // Import Plus icon
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -42,6 +43,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { AccountManager } from "@/components/AccountManager";
 import CurrencyConverter from "@/pages/CurrencyConverter"; 
+import { Link } from "react-router-dom"; // Import Link
 
 const Dashboard = () => {
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme(); 
@@ -52,14 +54,15 @@ const Dashboard = () => {
   const currentProfile = profiles.find(p => p.id === currentProfileId);
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "financial-statements", label: "Financial Statements", icon: Scale },
-    { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, 
-    { id: "cards", label: "Cards", icon: CreditCard },
-    { id: "accounts", label: "Accounts", icon: Banknote },
-    { id: "profile", label: "Profile", icon: User },
-    { id: "export", label: "Export", icon: Download },
+    { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
+    { id: "add-transaction", label: "Add Transaction", icon: Plus, path: "/add-transaction" }, // New menu item
+    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/dashboard" }, // Analytics will show charts on dashboard
+    { id: "financial-statements", label: "Financial Statements", icon: Scale, path: "/dashboard" },
+    { id: "currency-converter", label: "Currency Converter", icon: DollarSign, path: "/dashboard" }, 
+    { id: "cards", label: "Cards", icon: CreditCard, path: "/dashboard" },
+    { id: "accounts", label: "Accounts", icon: Banknote, path: "/dashboard" },
+    { id: "profile", label: "Profile", icon: User, path: "/dashboard" },
+    { id: "export", label: "Export", icon: Download, path: "/dashboard" },
   ];
 
   const currencyOptions = Object.keys(exchangeRates).map(currencyCode => ({
@@ -265,9 +268,12 @@ const Dashboard = () => {
                         variant={activeSection === item.id ? "default" : "ghost"}
                         className="w-full justify-start"
                         onClick={() => setActiveSection(item.id)}
+                        asChild // Use asChild for Link
                       >
-                        <Icon className="h-5 w-5 mr-2" />
-                        {item.label}
+                        <Link to={item.path}>
+                          <Icon className="h-5 w-5 mr-2" />
+                          {item.label}
+                        </Link>
                       </Button>
                     );
                   })}
@@ -311,9 +317,12 @@ const Dashboard = () => {
                   variant={activeSection === item.id ? "default" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection(item.id)}
+                  asChild // Use asChild for Link
                 >
-                  <Icon className="h-5 w-5 mr-2" />
-                  {item.label}
+                  <Link to={item.path}>
+                    <Icon className="h-5 w-5 mr-2" />
+                    {item.label}
+                  </Link>
                 </Button>
               );
             })}
