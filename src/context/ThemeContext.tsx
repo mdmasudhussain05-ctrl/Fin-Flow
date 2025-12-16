@@ -22,7 +22,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const [fontFamily, setFontFamily] = useState<FontFamily>(() => {
     const savedFont = localStorage.getItem("fontFamily") as FontFamily | null;
-    return savedFont || "System Default";
+    return savedFont || "Times New Roman"; // Changed default font to Times New Roman
   });
 
   useEffect(() => {
