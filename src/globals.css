@@ -68,33 +68,33 @@
   }
 
   .cream {
-    --background: 30 100% 98%; /* Very light, warm beige */
-    --foreground: 200 10% 20%; /* Dark grayish blue */
-    --card: 30 100% 99%;
-    --card-foreground: 200 10% 20%;
-    --popover: 30 100% 99%;
-    --popover-foreground: 200 10% 20%;
-    --primary: 30 50% 50%; /* Muted orange/brown */
+    --background: 30 100% 95%; /* Lighter, more saturated cream */
+    --foreground: 200 10% 15%; /* Darker text for contrast */
+    --card: 30 100% 97%; /* Slightly lighter card background */
+    --card-foreground: 200 10% 15%;
+    --popover: 30 100% 97%;
+    --popover-foreground: 200 10% 15%;
+    --primary: 30 60% 40%; /* Richer muted orange/brown */
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 20% 90%; /* Light tan */
-    --secondary-foreground: 200 10% 20%;
-    --muted: 40 20% 95%;
-    --muted-foreground: 200 5% 40%;
-    --accent: 40 20% 90%;
-    --accent-foreground: 200 10% 20%;
+    --secondary: 40 30% 85%; /* Deeper tan */
+    --secondary-foreground: 200 10% 15%;
+    --muted: 40 25% 90%; /* Slightly darker muted */
+    --muted-foreground: 200 5% 30%; /* Darker muted text */
+    --accent: 40 30% 85%;
+    --accent-foreground: 200 10% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 40 10% 85%;
-    --input: 40 10% 90%;
-    --ring: 30 50% 50%;
-    --sidebar-background: 30 100% 97%;
-    --sidebar-foreground: 200 10% 20%;
-    --sidebar-primary: 30 50% 50%;
+    --border: 40 15% 80%; /* More visible border */
+    --input: 40 15% 88%; /* Slightly darker input */
+    --ring: 30 60% 40%;
+    --sidebar-background: 30 100% 94%; /* Creamier sidebar */
+    --sidebar-foreground: 200 10% 15%;
+    --sidebar-primary: 30 60% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 20% 90%;
-    --sidebar-accent-foreground: 200 10% 20%;
-    --sidebar-border: 40 10% 85%;
-    --sidebar-ring: 30 50% 50%;
+    --sidebar-accent: 40 30% 85%;
+    --sidebar-accent-foreground: 200 10% 15%;
+    --sidebar-border: 40 15% 80%;
+    --sidebar-ring: 30 60% 40%;
   }
 }
 
