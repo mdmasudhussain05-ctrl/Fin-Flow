@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFinance } from "@/context/FinanceContext";
 import { Transaction } from "@/context/FinanceContext";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Receipt } from "lucide-react";
 import TransactionForm from "@/components/TransactionForm";
 import { format } from "date-fns";
 
@@ -44,9 +44,12 @@ const TransactionList = () => {
       </CardHeader>
       <CardContent>
         {sortedTransactions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <p>No transactions yet</p>
-            <p className="text-sm mt-2">Add your first transaction to get started</p>
+          <div className="text-center py-8">
+            <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <Receipt className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No transactions yet</h3>
+            <p className="text-gray-500 dark:text-gray-400">Add your first transaction to get started</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -61,33 +64,37 @@ const TransactionList = () => {
               return (
                 <div 
                   key={transaction.id} 
-                  className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    {category && (
+                    {category ? (
                       <div className={`w-10 h-10 rounded-full ${category.color} flex items-center justify-center`}>
                         <span className="text-white text-xs font-bold">
                           {category.name.charAt(0)}
                         </span>
                       </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <Receipt className="h-5 w-5 text-gray-500" />
+                      </div>
                     )}
                     <div>
-                      <p className="font-medium">{transaction.description}</p>
-                      <p className="text-xs text-gray-500">
-                        {format(new Date(transaction.date), 'MMM dd, yyyy')}
+                      <p className="font-medium text-gray-900 dark:text-white">{transaction.description}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {format(new Date(transaction.date), 'MMM dd, yyyy')} • {category?.name || 'Uncategorized'}
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-2">
-                    <div className={`text-right ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                      <p className="font-medium">
+                    <div className={`text-right font-medium ${transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <p>
                         {transaction.type === 'income' ? '+' : '-'} 
-                        {baseCurrency} {convertedAmount.toFixed(2)}
+                        {baseCurrency} {convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                       {transaction.currency !== baseCurrency && (
-                        <p className="text-xs text-gray-500">
-                          {transaction.currency} {transaction.amount.toFixed(2)}
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {transaction.currency} {transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       )}
                     </div>
@@ -103,7 +110,7 @@ const TransactionList = () => {
                       <Button 
                         size="icon" 
                         variant="ghost" 
-                        className="h-8 w-8 text-red-500 hover:text-red-700"
+                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                         onClick={() => handleDelete(transaction.id)}
                       >
                         <Trash2 className="h-4 w-4" />

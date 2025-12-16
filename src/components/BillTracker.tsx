@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useFinance } from "@/context/FinanceContext";
 import { Bill } from "@/context/FinanceContext";
-import { Plus, Edit, Trash2, Save, X, Calendar } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Calendar, Bell } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 
 const BillTracker = () => {
@@ -87,10 +87,10 @@ const BillTracker = () => {
   };
 
   const getStatusColor = (days: number, isPaid: boolean) => {
-    if (isPaid) return "bg-green-100 text-green-800";
-    if (days < 0) return "bg-red-100 text-red-800";
-    if (days <= 3) return "bg-orange-100 text-orange-800";
-    return "bg-blue-100 text-blue-800";
+    if (isPaid) return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+    if (days < 0) return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+    if (days <= 3) return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300";
+    return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
   };
 
   return (
@@ -108,7 +108,7 @@ const BillTracker = () => {
       </CardHeader>
       <CardContent>
         {isAdding && (
-          <div className="mb-6 p-4 border border-dashed rounded-xl">
+          <div className="mb-6 p-4 border border-dashed rounded-xl bg-gray-50 dark:bg-gray-800/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="billName">Bill Name</Label>
@@ -117,6 +117,7 @@ const BillTracker = () => {
                   value={newBill.name}
                   onChange={(e) => setNewBill({...newBill, name: e.target.value})}
                   placeholder="e.g., Rent, Netflix"
+                  className="mt-1"
                 />
               </div>
               <div>
@@ -127,6 +128,7 @@ const BillTracker = () => {
                   value={newBill.amount || ""}
                   onChange={(e) => setNewBill({...newBill, amount: parseFloat(e.target.value) || 0})}
                   placeholder="0.00"
+                  className="mt-1"
                 />
               </div>
               <div>
@@ -136,12 +138,13 @@ const BillTracker = () => {
                   type="date"
                   value={newBill.dueDate}
                   onChange={(e) => setNewBill({...newBill, dueDate: e.target.value})}
+                  className="mt-1"
                 />
               </div>
               <div>
                 <Label htmlFor="billCurrency">Currency</Label>
                 <Select value={newBill.currency} onValueChange={(value) => setNewBill({...newBill, currency: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -168,9 +171,12 @@ const BillTracker = () => {
         )}
 
         {bills.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <p>No bills added yet</p>
-            <p className="text-sm mt-2">Add your recurring bills to track them</p>
+          <div className="text-center py-8">
+            <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <Bell className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No bills added yet</h3>
+            <p className="text-gray-500 dark:text-gray-400">Add your recurring bills to track them</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -181,7 +187,7 @@ const BillTracker = () => {
               return (
                 <div 
                   key={bill.id} 
-                  className="flex items-center justify-between p-4 rounded-xl border border-gray-100"
+                  className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   {editingId === bill.id ? (
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full">
@@ -220,12 +226,12 @@ const BillTracker = () => {
                   ) : (
                     <>
                       <div className="flex items-center space-x-3">
-                        <div className="bg-gray-100 p-2 rounded-lg">
-                          <Calendar className="h-5 w-5 text-gray-600" />
+                        <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
+                          <Calendar className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         </div>
                         <div>
-                          <p className="font-medium">{bill.name}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium text-gray-900 dark:text-white">{bill.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             Due: {format(new Date(bill.dueDate), 'MMM dd, yyyy')}
                           </p>
                         </div>
@@ -233,8 +239,8 @@ const BillTracker = () => {
                       
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
-                          <p className="font-medium">
-                            {bill.currency} {bill.amount.toFixed(2)}
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {bill.currency} {bill.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                           <span className={`text-xs px-2 py-1 rounded-full ${statusColor}`}>
                             {bill.isPaid 
@@ -263,7 +269,7 @@ const BillTracker = () => {
                           <Button 
                             size="icon" 
                             variant="ghost" 
-                            className="text-red-500 hover:text-red-700"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                             onClick={() => deleteBill(bill.id)}
                           >
                             <Trash2 className="h-4 w-4" />

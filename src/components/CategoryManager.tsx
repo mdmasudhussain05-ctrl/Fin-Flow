@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFinance } from "@/context/FinanceContext";
 import { Category } from "@/context/FinanceContext";
-import { Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Tag } from "lucide-react";
 
 const CategoryManager = () => {
   const { categories, addCategory, updateCategory, deleteCategory } = useFinance();
@@ -25,6 +25,8 @@ const CategoryManager = () => {
     "bg-pink-500",
     "bg-indigo-500",
     "bg-teal-500",
+    "bg-orange-500",
+    "bg-cyan-500",
   ];
 
   const handleAddCategory = () => {
@@ -62,7 +64,7 @@ const CategoryManager = () => {
       </CardHeader>
       <CardContent>
         {isAdding && (
-          <div className="mb-6 p-4 border border-dashed rounded-xl">
+          <div className="mb-6 p-4 border border-dashed rounded-xl bg-gray-50 dark:bg-gray-800/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="categoryName">Category Name</Label>
@@ -71,16 +73,18 @@ const CategoryManager = () => {
                   value={newCategory.name}
                   onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
                   placeholder="Enter category name"
+                  className="mt-1"
                 />
               </div>
               <div>
                 <Label>Color</Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {colorOptions.map((color) => (
                     <button
                       key={color}
-                      className={`w-8 h-8 rounded-full ${color} ${newCategory.color === color ? 'ring-2 ring-offset-2 ring-gray-400' : ''}`}
+                      className={`w-8 h-8 rounded-full ${color} ${newCategory.color === color ? 'ring-2 ring-offset-2 ring-gray-400 dark:ring-gray-600' : ''}`}
                       onClick={() => setNewCategory({...newCategory, color})}
+                      aria-label={`Select ${color} color`}
                     />
                   ))}
                 </div>
@@ -103,7 +107,7 @@ const CategoryManager = () => {
           {categories.map((category) => (
             <div 
               key={category.id} 
-              className="border rounded-xl p-3 flex flex-col items-center"
+              className="border rounded-xl p-3 flex flex-col items-center bg-white dark:bg-gray-800/50 hover:shadow-md transition-shadow"
             >
               {editingId === category.id ? (
                 <div className="w-full">
@@ -116,8 +120,9 @@ const CategoryManager = () => {
                     {colorOptions.map((color) => (
                       <button
                         key={color}
-                        className={`w-5 h-5 rounded-full ${color} ${editCategory.color === color ? 'ring-1 ring-offset-1 ring-gray-400' : ''}`}
+                        className={`w-5 h-5 rounded-full ${color} ${editCategory.color === color ? 'ring-1 ring-offset-1 ring-gray-400 dark:ring-gray-600' : ''}`}
                         onClick={() => setEditCategory({...editCategory, color})}
+                        aria-label={`Select ${color} color`}
                       />
                     ))}
                   </div>
@@ -147,7 +152,7 @@ const CategoryManager = () => {
                       {category.name.charAt(0)}
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-center">{category.name}</p>
+                  <p className="text-sm font-medium text-center text-gray-900 dark:text-white">{category.name}</p>
                   <div className="flex gap-1 mt-2">
                     <Button 
                       size="icon" 
@@ -160,7 +165,7 @@ const CategoryManager = () => {
                     <Button 
                       size="icon" 
                       variant="ghost" 
-                      className="h-6 w-6 text-red-500 hover:text-red-700"
+                      className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                       onClick={() => deleteCategory(category.id)}
                     >
                       <Trash2 className="h-3 w-3" />

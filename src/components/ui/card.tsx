@@ -12,8 +12,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        "rounded-2xl border border-gray-200 bg-white shadow-sm",
-        glassEffect && "bg-white/30 backdrop-blur-lg border-white/50",
+        "rounded-2xl border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md",
+        glassEffect && "bg-white/30 dark:bg-gray-800/30 backdrop-blur-lg border-white/50 dark:border-gray-700/50",
         className
       )}
       {...props}

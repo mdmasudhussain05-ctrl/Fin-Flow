@@ -18,7 +18,11 @@ import {
   Settings,
   Download,
   Sun,
-  Moon
+  Moon,
+  Wallet,
+  PieChart,
+  Calendar,
+  FileBarChart
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -34,7 +38,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ProfileSelector } from "@/components/ProfileSelector";
 import { useTheme } from "@/context/ThemeContext";
 import { useProfile } from "@/context/ProfileContext";
-import { Card } from "@/components/ui/card"; // Fix: import Card component
+import { Card } from "@/components/ui/card";
 
 const Dashboard = () => {
   const { theme } = useTheme();
@@ -77,12 +81,12 @@ const Dashboard = () => {
         );
       case "analytics":
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ExpenseChart />
-            <IncomeExpenseChart />
-            <div className="lg:col-span-2">
-              <CategoryManager />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ExpenseChart />
+              <IncomeExpenseChart />
             </div>
+            <CategoryManager />
           </div>
         );
       case "cards":
@@ -95,12 +99,16 @@ const Dashboard = () => {
                 <h2 className="text-2xl font-bold mb-4">Profile Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">Name</label>
-                    <p className="text-lg">{currentProfile?.name || "Unknown"}</p>
+                    <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">{currentProfile?.name || "Unknown"}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">Email</label>
-                    <p className="text-lg">{currentProfile?.email || "Unknown"}</p>
+                    <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">{currentProfile?.email || "Unknown"}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Profile ID</label>
+                    <p className="text-sm font-mono text-gray-700 dark:text-gray-300">{currentProfileId}</p>
                   </div>
                 </div>
               </div>
@@ -110,14 +118,27 @@ const Dashboard = () => {
                 <h2 className="text-2xl font-bold mb-4">Account Settings</h2>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span>Theme</span>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">Theme</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Customize appearance</p>
+                    </div>
                     <ThemeToggle />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Mode</span>
-                    <span className="px-2 py-1 bg-gray-100 rounded text-sm">
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">Mode</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Current theme mode</p>
+                    </div>
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm font-medium text-gray-900 dark:text-white">
                       {theme === "dark" ? "Dark" : theme === "light" ? "Light" : "System"}
                     </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">Data Sync</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Sync across devices</p>
+                    </div>
+                    <Button variant="outline" size="sm">Enable</Button>
                   </div>
                 </div>
               </div>
@@ -158,7 +179,12 @@ const Dashboard = () => {
               </SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader>
-                  <SheetTitle>FinFlow</SheetTitle>
+                  <SheetTitle className="flex items-center gap-2">
+                    <div className="bg-gradient-to-r from-teal-500 to-cyan-600 w-8 h-8 rounded-lg flex items-center justify-center">
+                      <Wallet className="h-5 w-5 text-white" />
+                    </div>
+                    FinFlow
+                  </SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 space-y-2">
                   {menuItems.map((item) => {
@@ -192,7 +218,7 @@ const Dashboard = () => {
         <div className="hidden md:block w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 rounded-l-2xl p-4 h-[calc(100vh-2rem)] sticky top-4">
           <div className="flex items-center mb-8">
             <div className="bg-gradient-to-r from-teal-500 to-cyan-600 w-10 h-10 rounded-xl flex items-center justify-center">
-              <CreditCard className="h-6 w-6 text-white" />
+              <Wallet className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-xl font-bold ml-3">FinFlow</h1>
           </div>
@@ -216,7 +242,7 @@ const Dashboard = () => {
           
           <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Theme</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Theme</span>
               <ThemeToggle />
             </div>
           </div>

@@ -13,7 +13,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { useProfile } from "@/context/ProfileContext";
-import { Plus, CreditCard, Edit, Trash2 } from "lucide-react";
+import { Plus, CreditCard, Edit, Trash2, Eye, EyeOff } from "lucide-react";
 import { 
   Dialog,
   DialogContent,
@@ -125,6 +125,7 @@ export function CardManager() {
                   onChange={(e) => setNewCard({...newCard, cardNumber: e.target.value})}
                   placeholder="Enter card number"
                   maxLength={19}
+                  className="mt-1"
                 />
               </div>
               <div>
@@ -134,13 +135,14 @@ export function CardManager() {
                   type="month"
                   value={newCard.expiryDate}
                   onChange={(e) => setNewCard({...newCard, expiryDate: e.target.value})}
+                  className="mt-1"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="cardType">Card Type</Label>
                   <Select value={newCard.cardType} onValueChange={(value) => setNewCard({...newCard, cardType: value})}>
-                    <SelectTrigger>
+                    <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -153,7 +155,7 @@ export function CardManager() {
                 <div>
                   <Label htmlFor="brand">Brand</Label>
                   <Select value={newCard.brand} onValueChange={(value) => setNewCard({...newCard, brand: value})}>
-                    <SelectTrigger>
+                    <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -173,16 +175,19 @@ export function CardManager() {
       </CardHeader>
       <CardContent>
         {profileCards.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <p>No cards added yet</p>
-            <p className="text-sm mt-2">Add your payment cards to track them</p>
+          <div className="text-center py-8">
+            <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <CreditCard className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No cards added yet</h3>
+            <p className="text-gray-500 dark:text-gray-400">Add your payment cards to track them</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {profileCards.map((card) => (
               <div key={card.id} className="relative">
                 {editingId === card.id ? (
-                  <div className="space-y-3 p-4 border rounded-xl">
+                  <div className="space-y-3 p-4 border rounded-xl bg-gray-50 dark:bg-gray-800/50">
                     <div>
                       <Label htmlFor="editCardNumber">Card Number</Label>
                       <Input
@@ -191,6 +196,7 @@ export function CardManager() {
                         onChange={(e) => setEditCard({...editCard, cardNumber: e.target.value})}
                         placeholder="Enter card number"
                         maxLength={19}
+                        className="mt-1"
                       />
                     </div>
                     <div>
@@ -200,6 +206,7 @@ export function CardManager() {
                         type="month"
                         value={editCard.expiryDate}
                         onChange={(e) => setEditCard({...editCard, expiryDate: e.target.value})}
+                        className="mt-1"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
@@ -212,12 +219,12 @@ export function CardManager() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-6 text-white shadow-lg">
                     <div className="flex justify-between items-start">
                       <div className="text-2xl">
                         {getCardIcon(card.brand)}
                       </div>
-                      <div className="text-xs uppercase tracking-wider">
+                      <div className="text-xs uppercase tracking-wider bg-white/20 px-2 py-1 rounded">
                         {card.cardType}
                       </div>
                     </div>

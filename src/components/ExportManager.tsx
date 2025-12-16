@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, FileSpreadsheet, FileText } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, FileBarChart } from "lucide-react";
 import { useFinance } from "@/context/FinanceContext";
 import { useProfile } from "@/context/ProfileContext";
 import { format } from "date-fns";
@@ -97,24 +97,44 @@ ${bills.map(b =>
       <CardHeader>
         <CardTitle>Export Data</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col sm:flex-row gap-4">
-        <Button 
-          onClick={exportToExcel} 
-          disabled={isExporting}
-          className="flex-1"
-        >
-          <FileSpreadsheet className="h-4 w-4 mr-2" />
-          Export to Excel
-        </Button>
-        <Button 
-          onClick={exportToPDF} 
-          disabled={isExporting}
-          variant="secondary"
-          className="flex-1"
-        >
-          <FileText className="h-4 w-4 mr-2" />
-          Export to PDF
-        </Button>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button 
+            onClick={exportToExcel} 
+            disabled={isExporting}
+            className="flex-1"
+          >
+            <FileSpreadsheet className="h-5 w-5 mr-2" />
+            Export to Excel
+          </Button>
+          <Button 
+            onClick={exportToPDF} 
+            disabled={isExporting}
+            variant="secondary"
+            className="flex-1"
+          >
+            <FileText className="h-5 w-5 mr-2" />
+            Export to PDF
+          </Button>
+        </div>
+        
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+          <h3 className="font-medium text-gray-900 dark:text-white mb-2">Export Options</h3>
+          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+            <li className="flex items-center">
+              <FileBarChart className="h-4 w-4 mr-2 text-teal-500" />
+              Include charts and visualizations
+            </li>
+            <li className="flex items-center">
+              <FileSpreadsheet className="h-4 w-4 mr-2 text-blue-500" />
+              Export in multiple formats (CSV, XLSX)
+            </li>
+            <li className="flex items-center">
+              <FileText className="h-4 w-4 mr-2 text-red-500" />
+              Generate detailed financial reports
+            </li>
+          </ul>
+        </div>
       </CardContent>
     </Card>
   );

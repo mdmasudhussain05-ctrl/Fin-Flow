@@ -14,7 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useFinance } from "@/context/FinanceContext";
 import { Transaction, TransactionType } from "@/context/FinanceContext";
-import { X } from "lucide-react";
+import { X, Wallet, Calendar, FileText, Tag, DollarSign } from "lucide-react";
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -70,21 +70,32 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 relative">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6 relative shadow-xl">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100"
+          className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         </button>
         
-        <h2 className="text-xl font-bold mb-6">
-          {transaction ? "Edit Transaction" : "Add Transaction"}
-        </h2>
+        <div className="mb-6">
+          <div className="bg-gradient-to-r from-teal-500 to-cyan-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+            <Wallet className="h-6 w-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {transaction ? "Edit Transaction" : "Add Transaction"}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {transaction ? "Update your transaction details" : "Add a new financial transaction"}
+          </p>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount" className="flex items-center">
+              <DollarSign className="h-4 w-4 mr-2 text-teal-500" />
+              Amount
+            </Label>
             <Input
               id="amount"
               type="number"
@@ -93,36 +104,48 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
               required
+              className="mt-1"
             />
           </div>
           
           <div>
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date" className="flex items-center">
+              <Calendar className="h-4 w-4 mr-2 text-teal-500" />
+              Date
+            </Label>
             <Input
               id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
+              className="mt-1"
             />
           </div>
           
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="flex items-center">
+              <FileText className="h-4 w-4 mr-2 text-teal-500" />
+              Description
+            </Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter description"
               required
+              className="mt-1"
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="type">Type</Label>
+              <Label htmlFor="type" className="flex items-center">
+                <Wallet className="h-4 w-4 mr-2 text-teal-500" />
+                Type
+              </Label>
               <Select value={type} onValueChange={(value: TransactionType) => setType(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -133,9 +156,12 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
             </div>
             
             <div>
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency" className="flex items-center">
+                <DollarSign className="h-4 w-4 mr-2 text-teal-500" />
+                Currency
+              </Label>
               <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger>
+                <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -150,9 +176,12 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
           </div>
           
           <div>
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category" className="flex items-center">
+              <Tag className="h-4 w-4 mr-2 text-teal-500" />
+              Category
+            </Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
+              <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
