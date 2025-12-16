@@ -42,7 +42,7 @@ import { Label } from "@/components/ui/label";
 import { AccountManager } from "@/components/AccountManager"; // Import AccountManager
 
 const Dashboard = () => {
-  const { theme } = useTheme();
+  const { theme, fontFamily, setFontFamily } = useTheme(); // Get fontFamily and setFontFamily
   const { profiles, currentProfileId } = useProfile();
   const { baseCurrency, setBaseCurrency, exchangeRates } = useFinance();
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -63,6 +63,15 @@ const Dashboard = () => {
     value: currencyCode,
     label: currencyCode,
   }));
+
+  const fontOptions = [
+    { value: "System Default", label: "System Default" },
+    { value: "Inter", label: "Inter" },
+    { value: "Roboto", label: "Roboto" },
+    { value: "Open Sans", label: "Open Sans" },
+    { value: "Lato", label: "Lato" },
+    { value: "Montserrat", label: "Montserrat" },
+  ];
 
   const renderContent = () => {
     switch (activeSection) {
@@ -148,6 +157,24 @@ const Dashboard = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {currencyOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">App Font</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Change the application font</p>
+                    </div>
+                    <Select value={fontFamily} onValueChange={(value) => setFontFamily(value as any)}>
+                      <SelectTrigger className="w-[150px]">
+                        <SelectValue placeholder="Select font" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>

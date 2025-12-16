@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFinance } from "@/context/FinanceContext";
 import { Transaction } from "@/context/FinanceContext";
-import { Plus, Edit, Trash2, Receipt } from "lucide-react";
+import { Plus, Edit, Trash2, Receipt, ImageIcon } from "lucide-react"; // Import ImageIcon
+import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 import TransactionForm from "@/components/TransactionForm";
 import { format } from "date-fns";
 
@@ -28,6 +29,11 @@ const TransactionList = () => {
   const sortedTransactions = [...transactions].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  const renderIcon = (iconName: string, className?: string) => {
+    const IconComponent = (LucideIcons as any)[iconName];
+    return IconComponent ? <IconComponent className={className} /> : <ImageIcon className={className} />;
+  };
 
   return (
     <Card className="glass-effect">
@@ -70,9 +76,7 @@ const TransactionList = () => {
                   <div className="flex items-center space-x-3">
                     {category ? (
                       <div className={`w-10 h-10 rounded-full ${category.color} flex items-center justify-center`}>
-                        <span className="text-white text-xs font-bold">
-                          {category.name.charAt(0)}
-                        </span>
+                        {renderIcon(category.icon, "h-5 w-5 text-white")}
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">

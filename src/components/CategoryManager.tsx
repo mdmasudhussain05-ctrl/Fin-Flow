@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFinance } from "@/context/FinanceContext";
 import { Category } from "@/context/FinanceContext";
-import { Plus, Edit, Trash2, Save, X, Tag } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Tag as TagIcon, ImageIcon } from "lucide-react"; // Renamed Tag to TagIcon to avoid conflict
+import * as LucideIcons from "lucide-react"; // Import all Lucide icons
+import { IconPicker } from "./IconPicker"; // Import the new IconPicker
 
 const CategoryManager = () => {
   const { categories, addCategory, updateCategory, deleteCategory } = useFinance();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [newCategory, setNewCategory] = useState({ name: "", color: "bg-blue-500" });
-  const [editCategory, setEditCategory] = useState({ name: "", color: "" });
+  const [newCategory, setNewCategory] = useState({ name: "", color: "bg-blue-500", icon: "Tag" });
+  const [editCategory, setEditCategory] = useState({ name: "", color: "", icon: "" });
 
   const colorOptions = [
     "bg-red-500",
@@ -31,22 +33,27 @@ const CategoryManager = () => {
 
   const handleAddCategory = () => {
     if (newCategory.name.trim()) {
-      addCategory({ ...newCategory, icon: "Tag" });
-      setNewCategory({ name: "", color: "bg-blue-500" });
+      addCategory(newCategory);
+      setNewCategory({ name: "", color: "bg-blue-500", icon: "Tag" });
       setIsAdding(false);
     }
   };
 
   const handleUpdateCategory = (id: string) => {
     if (editCategory.name.trim()) {
-      updateCategory(id, { name: editCategory.name, color: editCategory.color });
+      updateCategory(id, { name: editCategory.name, color: editCategory.color, icon: editCategory.icon });
       setEditingId(null);
     }
   };
 
   const startEditing = (category: Category) => {
     setEditingId(category.id);
-    setEditCategory({ name: category.name, color: category.color });
+    setEditCategory({ name: category.name, color: category.color, icon: category.icon });
+  };
+
+  const renderIcon = (iconName: string, className?: string) => {
+    const IconComponent = (LucideIcons as any)[iconName];
+    return IconComponent ? <IconComponent className={className} /> : <ImageIcon className={className} />;
   };
 
   return (
@@ -89,6 +96,14 @@ const CategoryManager = () => {
                   ))}
                 </div>
               </div>
+              <div className="md:col-span-2">
+                <Label>Icon</Label>
+                <IconPicker 
+                  value={newCategory.icon} 
+                  onChange={(icon) => setNewCategory({...newCategory, icon})} 
+                  className="w-full mt-1"
+                />
+              </div>
             </div>
             <div className="flex gap-2 mt-4">
               <Button size="sm" onClick={handleAddCategory}>
@@ -126,6 +141,11 @@ const CategoryManager = () => {
                       />
                     ))}
                   </div>
+                  <IconPicker 
+                    value={editCategory.icon} 
+                    onChange={(icon) => setEditCategory({...editCategory, icon})} 
+                    className="w-full mb-2"
+                  />
                   <div className="flex gap-1">
                     <Button 
                       size="icon" 
@@ -148,9 +168,7 @@ const CategoryManager = () => {
               ) : (
                 <>
                   <div className={`w-12 h-12 rounded-full ${category.color} flex items-center justify-center mb-2`}>
-                    <span className="text-white text-lg font-bold">
-                      {category.name.charAt(0)}
-                    </span>
+                    {renderIcon(category.icon, "h-6 w-6 text-white")}
                   </div>
                   <p className="text-sm font-medium text-center text-gray-900 dark:text-white">{category.name}</p>
                   <div className="flex gap-1 mt-2">

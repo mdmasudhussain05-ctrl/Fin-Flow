@@ -11,7 +11,7 @@ export interface Category {
   id: string;
   name: string;
   color: string;
-  icon: string;
+  icon: string; // Stores Lucide icon name as a string
 }
 
 export interface Account {

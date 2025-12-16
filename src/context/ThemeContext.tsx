@@ -3,10 +3,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type Theme = "light" | "dark" | "system";
+type FontFamily = "Inter" | "Roboto" | "Open Sans" | "Lato" | "Montserrat" | "System Default";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  fontFamily: FontFamily;
+  setFontFamily: (font: FontFamily) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -15,6 +18,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
     return savedTheme || "system";
+  });
+
+  const [fontFamily, setFontFamily] = useState<FontFamily>(() => {
+    const savedFont = localStorage.getItem("fontFamily") as FontFamily | null;
+    return savedFont || "System Default";
   });
 
   useEffect(() => {
@@ -46,8 +54,34 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem("fontFamily", fontFamily);
+    const root = document.documentElement;
+    switch (fontFamily) {
+      case "Inter":
+        root.style.fontFamily = "Inter, sans-serif";
+        break;
+      case "Roboto":
+        root.style.fontFamily = "Roboto, sans-serif";
+        break;
+      case "Open Sans":
+        root.style.fontFamily = "'Open Sans', sans-serif";
+        break;
+      case "Lato":
+        root.style.fontFamily = "Lato, sans-serif";
+        break;
+      case "Montserrat":
+        root.style.fontFamily = "Montserrat, sans-serif";
+        break;
+      case "System Default":
+      default:
+        root.style.fontFamily = ""; // Revert to default Tailwind font
+        break;
+    }
+  }, [fontFamily]);
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, fontFamily, setFontFamily }}>
       {children}
     </ThemeContext.Provider>
   );

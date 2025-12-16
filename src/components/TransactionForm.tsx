@@ -14,7 +14,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { useFinance } from "@/context/FinanceContext";
 import { Transaction, TransactionType } from "@/context/FinanceContext";
-import { X, Wallet, Calendar, FileText, Tag, DollarSign, Banknote } from "lucide-react"; // Added Banknote icon
+import { X, Wallet, Calendar, FileText, Tag, DollarSign, Banknote, ImageIcon } from "lucide-react"; // Added Banknote icon, ImageIcon
+import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -42,6 +43,11 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
     value: currencyCode,
     label: currencyCode,
   }));
+
+  const renderIcon = (iconName: string, className?: string) => {
+    const IconComponent = (LucideIcons as any)[iconName];
+    return IconComponent ? <IconComponent className={className} /> : <ImageIcon className={className} />;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,7 +197,7 @@ const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProp
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id}>
                     <div className="flex items-center">
-                      <span className={`w-3 h-3 rounded-full ${cat.color} mr-2`}></span>
+                      {renderIcon(cat.icon, `w-3 h-3 rounded-full ${cat.color} mr-2 text-white`)}
                       {cat.name}
                     </div>
                   </SelectItem>
