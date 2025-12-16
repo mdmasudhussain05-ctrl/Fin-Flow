@@ -2,99 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap');
-
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
+
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
+
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
+
     --radius: 0.5rem;
+
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 0 0% 0%; /* Pure black background */
-    --foreground: 0 0% 100%; /* White text */
-    --card: 0 0% 5%; /* Very dark card background */
-    --card-foreground: 0 0% 100%; /* White text on cards */
-    --popover: 0 0% 5%; /* Very dark popover background */
-    --popover-foreground: 0 0% 100%; /* White text in popovers */
-    --primary: 0 0% 100%; /* White primary elements */
-    --primary-foreground: 0 0% 0%; /* Black text on primary elements */
-    --secondary: 0 0% 10%; /* Dark secondary elements */
-    --secondary-foreground: 0 0% 100%; /* White text on secondary elements */
-    --muted: 0 0% 10%; /* Dark muted elements */
-    --muted-foreground: 0 0% 70%; /* Light gray muted text */
-    --accent: 0 0% 10%; /* Dark accent elements */
-    --accent-foreground: 0 0% 100%; /* White text on accent elements */
-    --destructive: 0 100% 50%; /* Red destructive elements */
-    --destructive-foreground: 0 0% 100%; /* White text on destructive elements */
-    --border: 0 0% 15%; /* Dark border color */
-    --input: 0 0% 15%; /* Dark input border color */
-    --ring: 0 0% 80%; /* Light gray ring color */
-    --sidebar-background: 0 0% 5%; /* Dark sidebar background */
-    --sidebar-foreground: 0 0% 90%; /* Light gray sidebar text */
-    --sidebar-primary: 0 0% 100%; /* White sidebar primary elements */
-    --sidebar-primary-foreground: 0 0% 0%; /* Black text on sidebar primary elements */
-    --sidebar-accent: 0 0% 15%; /* Dark sidebar accent elements */
-    --sidebar-accent-foreground: 0 0% 100%; /* White text on sidebar accent elements */
-    --sidebar-border: 0 0% 15%; /* Dark sidebar border */
-    --sidebar-ring: 0 0% 80%; /* Light gray sidebar ring */
-  }
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-  .cream {
-    --background: 30 100% 95%; /* Lighter, more saturated cream */
-    --foreground: 200 10% 15%; /* Darker text for contrast */
-    --card: 30 100% 97%; /* Slightly lighter card background */
-    --card-foreground: 200 10% 15%;
-    --popover: 30 100% 97%;
-    --popover-foreground: 200 10% 15%;
-    --primary: 30 60% 40%; /* Richer muted orange/brown */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 40 30% 85%; /* Deeper tan */
-    --secondary-foreground: 200 10% 15%;
-    --muted: 40 25% 90%; /* Slightly darker muted */
-    --muted-foreground: 200 5% 30%; /* Darker muted text */
-    --accent: 40 30% 85%;
-    --accent-foreground: 200 10% 15%;
-    --destructive: 0 84.2% 60.2%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 40 15% 80%; /* More visible border */
-    --input: 40 15% 88%; /* Slightly darker input */
-    --ring: 30 60% 40%;
-    --sidebar-background: 30 100% 94%; /* Creamier sidebar */
-    --sidebar-foreground: 200 10% 15%;
-    --sidebar-primary: 30 60% 40%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 30% 85%;
-    --sidebar-accent-foreground: 200 10% 15%;
-    --sidebar-border: 40 15% 80%;
-    --sidebar-ring: 30 60% 40%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -102,63 +94,8 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* Custom styles */
-.glass-effect {
-  @apply bg-white/30 dark:bg-gray-800/30 backdrop-blur-lg border border-white/50 dark:border-gray-700/50 shadow-lg;
-}
-
-/* Responsive design fixes */
-@media (max-width: 768px) {
-  .grid-cols-dashboard {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
-}
-
-/* Focus styles */
-:focus-visible {
-  @apply outline-none ring-2 ring-ring ring-offset-2;
-}
-
-/* Animation utilities */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Button hover effects */
-button {
-  @apply transition-all duration-200;
 }
