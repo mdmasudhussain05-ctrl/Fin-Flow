@@ -10,6 +10,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import AddTransaction from "./pages/AddTransaction";
 import Index from "./pages/Index"; // Import the Index page
+import { DeviceModeProvider } from "./context/DeviceModeContext"; // Import DeviceModeProvider
 
 const queryClient = new QueryClient();
 
@@ -18,19 +19,22 @@ const App = () => (
     <ThemeProvider>
       <ProfileProvider>
         <FinanceProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} /> {/* Changed to Index */}
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/add-transaction" element={<AddTransaction />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <DeviceModeProvider> {/* Wrap with DeviceModeProvider */}
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} /> {/* Changed to Dashboard */}
+                  <Route path="/index" element={<Index />} /> {/* Index page moved to /index */}
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/add-transaction" element={<AddTransaction />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </DeviceModeProvider>
         </FinanceProvider>
       </ProfileProvider>
     </ThemeProvider>
