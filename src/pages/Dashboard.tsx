@@ -19,7 +19,8 @@ import {
   Download,
   Scale,
   Banknote, 
-  DollarSign, 
+  DollarSign,
+  PlusCircle
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -42,6 +43,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { AccountManager } from "@/components/AccountManager";
 import CurrencyConverter from "@/pages/CurrencyConverter"; 
+import AddTransaction from "@/pages/AddTransaction";
 
 const Dashboard = () => {
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme(); 
@@ -53,6 +55,7 @@ const Dashboard = () => {
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "add-transaction", label: "Add Transaction", icon: PlusCircle }, // New menu item
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "financial-statements", label: "Financial Statements", icon: Scale },
     { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, 
@@ -108,6 +111,8 @@ const Dashboard = () => {
             </div>
           </>
         );
+      case "add-transaction": // New case for the Add Transaction page
+        return <AddTransaction />;
       case "analytics":
         return (
           <div className="space-y-6">
