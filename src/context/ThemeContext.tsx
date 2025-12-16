@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type Theme = "light" | "dark" | "system";
-type FontFamily = "Inter" | "Roboto" | "Open Sans" | "Lato" | "Montserrat" | "System Default";
+type FontFamily = "Inter" | "Roboto" | "Open Sans" | "Lato" | "Montserrat" | "Times New Roman" | "System Default";
 
 interface ThemeContextType {
   theme: Theme;
@@ -72,6 +72,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         break;
       case "Montserrat":
         root.style.fontFamily = "Montserrat, sans-serif";
+        break;
+      case "Times New Roman":
+        root.style.fontFamily = "'Times New Roman', serif";
         break;
       case "System Default":
       default:

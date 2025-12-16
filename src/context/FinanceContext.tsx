@@ -174,7 +174,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [baseCurrency, setBaseCurrency] = useState<string>(() => {
-    return localStorage.getItem("baseCurrency") || "USD";
+    return localStorage.getItem("baseCurrency") || "INR"; // Changed default to INR
   });
 
   const [exchangeRates] = useState<ExchangeRate>(defaultExchangeRates);
@@ -287,6 +287,14 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteBill = (id: string) => {
     setBills(bills.filter((bill) => bill.id !== id));
+    // Reassign transactions from deleted account to a default account or null
+    setTransactions(
+      transactions.map((transaction) =>
+        transaction.accountId === id
+          ? { ...transaction, accountId: profileAccounts.length > 0 ? profileAccounts[0].id : "default" } // Reassign to first available or 'default'
+          : transaction
+      )
+    );
   };
 
   // Account functions

@@ -19,6 +19,7 @@ import {
   Download,
   Scale,
   Banknote, // Added Banknote icon for accounts
+  DollarSign, // Added for Currency Converter
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -39,7 +40,8 @@ import { Card } from "@/components/ui/card";
 import FinancialStatements from "@/components/FinancialStatements";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { AccountManager } from "@/components/AccountManager"; // Import AccountManager
+import { AccountManager } from "@/components/AccountManager";
+import CurrencyConverter from "@/pages/CurrencyConverter"; // Import the new page
 
 const Dashboard = () => {
   const { theme, fontFamily, setFontFamily } = useTheme(); // Get fontFamily and setFontFamily
@@ -53,8 +55,9 @@ const Dashboard = () => {
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "financial-statements", label: "Financial Statements", icon: Scale },
+    { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, // New menu item
     { id: "cards", label: "Cards", icon: CreditCard },
-    { id: "accounts", label: "Accounts", icon: Banknote }, // New menu item for accounts
+    { id: "accounts", label: "Accounts", icon: Banknote },
     { id: "profile", label: "Profile", icon: User },
     { id: "export", label: "Export", icon: Download },
   ];
@@ -71,6 +74,7 @@ const Dashboard = () => {
     { value: "Open Sans", label: "Open Sans" },
     { value: "Lato", label: "Lato" },
     { value: "Montserrat", label: "Montserrat" },
+    { value: "Times New Roman", label: "Times New Roman" }, // Added Roman font
   ];
 
   const renderContent = () => {
@@ -109,9 +113,11 @@ const Dashboard = () => {
         );
       case "financial-statements":
         return <FinancialStatements />;
+      case "currency-converter": // New case for CurrencyConverter
+        return <CurrencyConverter />;
       case "cards":
         return <CardManager />;
-      case "accounts": // New case for AccountManager
+      case "accounts":
         return <AccountManager />;
       case "profile":
         return (
