@@ -76,7 +76,7 @@
 
 /* Custom styles */
 .glass-effect {
-  @apply bg-white/30 backdrop-blur-lg border border-white/50 shadow-lg;
+  @apply bg-white/30 dark:bg-gray-800/30 backdrop-blur-lg border border-white/50 dark:border-gray-700/50 shadow-lg;
 }
 
 /* Responsive design fixes */

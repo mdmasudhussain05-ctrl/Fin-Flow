@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useProfile } from "./ProfileContext";
 
 // Types
 export type TransactionType = "income" | "expense";
@@ -14,6 +15,7 @@ export interface Category {
 
 export interface Transaction {
   id: string;
+  profileId: string;
   amount: number;
   date: string;
   description: string;
@@ -24,6 +26,7 @@ export interface Transaction {
 
 export interface Bill {
   id: string;
+  profileId: string;
   name: string;
   amount: number;
   dueDate: string;
@@ -64,13 +67,13 @@ interface FinanceContextType {
   bills: Bill[];
   baseCurrency: string;
   exchangeRates: ExchangeRate;
-  addTransaction: (transaction: Omit<Transaction, "id">) => void;
+  addTransaction: (transaction: Omit<Transaction, "id" | "profileId">) => void;
   updateTransaction: (id: string, transaction: Partial<Transaction>) => void;
   deleteTransaction: (id: string) => void;
   addCategory: (category: Omit<Category, "id">) => void;
   updateCategory: (id: string, category: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
-  addBill: (bill: Omit<Bill, "id">) => void;
+  addBill: (bill: Omit<Bill, "id" | "profileId">) => void;
   updateBill: (id: string, bill: Partial<Bill>) => void;
   deleteBill: (id: string) => void;
   setBaseCurrency: (currency: string) => void;
@@ -85,6 +88,8 @@ interface FinanceContextType {
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 export const FinanceProvider = ({ children }: { children: ReactNode }) => {
+  const { currentProfileId } = useProfile();
+  
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     const saved = localStorage.getItem("transactions");
     return saved ? JSON.parse(saved) : [];
@@ -123,11 +128,16 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("baseCurrency", baseCurrency);
   }, [baseCurrency]);
 
+  // Filter data by current profile
+  const profileTransactions = transactions.filter(t => t.profileId === currentProfileId);
+  const profileBills = bills.filter(b => b.profileId === currentProfileId);
+
   // Transaction functions
-  const addTransaction = (transaction: Omit<Transaction, "id">) => {
+  const addTransaction = (transaction: Omit<Transaction, "id" | "profileId">) => {
     const newTransaction = {
       ...transaction,
       id: Date.now().toString(),
+      profileId: currentProfileId,
     };
     setTransactions([...transactions, newTransaction]);
   };
@@ -144,7 +154,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     setTransactions(transactions.filter((transaction) => transaction.id !== id));
   };
 
-  // Category functions
+  // Category functions (global for all profiles)
   const addCategory = (category: Omit<Category, "id">) => {
     const newCategory = {
       ...category,
@@ -174,10 +184,11 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Bill functions
-  const addBill = (bill: Omit<Bill, "id">) => {
+  const addBill = (bill: Omit<Bill, "id" | "profileId">) => {
     const newBill = {
       ...bill,
       id: Date.now().toString(),
+      profileId: currentProfileId,
     };
     setBills([...bills, newBill]);
   };
@@ -203,7 +214,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
 
   // Financial calculations
   const getTotalBalance = (): number => {
-    return transactions.reduce((total, transaction) => {
+    return profileTransactions.reduce((total, transaction) => {
       const convertedAmount = convertAmount(
         transaction.amount,
         transaction.currency,
@@ -220,7 +231,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
 
-    return transactions
+    return profileTransactions
       .filter((transaction) => {
         const transactionDate = new Date(transaction.date);
         return (
@@ -244,7 +255,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
 
-    return transactions
+    return profileTransactions
       .filter((transaction) => {
         const transactionDate = new Date(transaction.date);
         return (
@@ -274,7 +285,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
       const month = date.toLocaleString('default', { month: 'short' });
       const year = date.getFullYear();
       
-      const monthTransactions = transactions.filter(transaction => {
+      const monthTransactions = profileTransactions.filter(transaction => {
         const transactionDate = new Date(transaction.date);
         return (
           transactionDate.getMonth() === date.getMonth() &&
@@ -303,7 +314,7 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getExpensesByCategory = () => {
-    const expenseTransactions = transactions.filter(t => t.type === "expense");
+    const expenseTransactions = profileTransactions.filter(t => t.type === "expense");
     const categoryMap: { [key: string]: number } = {};
     
     expenseTransactions.forEach(transaction => {
@@ -338,9 +349,9 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   return (
     <FinanceContext.Provider
       value={{
-        transactions,
+        transactions: profileTransactions,
         categories,
-        bills,
+        bills: profileBills,
         baseCurrency,
         exchangeRates,
         addTransaction,
