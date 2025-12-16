@@ -7,19 +7,17 @@ import { useFinance } from "@/context/FinanceContext";
 import { Transaction } from "@/context/FinanceContext";
 import { Plus, Edit, Trash2, Receipt, ImageIcon } from "lucide-react"; // Import ImageIcon
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons
-import { Link } from "react-router-dom"; // Import Link for navigation
+import TransactionForm from "@/components/TransactionForm";
 import { format } from "date-fns";
 
 const TransactionList = () => {
   const { transactions, categories, accounts, deleteTransaction, baseCurrency, convertAmount } = useFinance();
+  const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const handleEdit = (transaction: Transaction) => {
-    // For editing, we'll still use the modal for now, or we could create an EditTransactionPage
-    // For this request, we're focusing on the "Add" button.
-    // If you'd like a dedicated edit page, let me know!
-    console.log("Editing transaction:", transaction);
-    // This would typically open a modal or navigate to an edit page
+    setEditingTransaction(transaction);
+    setShowForm(true);
   };
 
   const handleDelete = (id: string) => {
@@ -43,13 +41,11 @@ const TransactionList = () => {
         <CardTitle>Recent Transactions</CardTitle>
         <Button 
           size="sm" 
-          asChild // Use asChild to pass props to the Link component
+          onClick={() => setShowForm(true)}
           className="rounded-full"
         >
-          <Link to="/add-transaction"> {/* Navigate to the new page */}
-            <Plus className="h-4 w-4 mr-1" />
-            Add
-          </Link>
+          <Plus className="h-4 w-4 mr-1" />
+          Add
         </Button>
       </CardHeader>
       <CardContent>
@@ -133,7 +129,16 @@ const TransactionList = () => {
         )}
       </CardContent>
       
-      {/* The TransactionForm is now on a separate page, so this modal logic is removed */}
+      {showForm && (
+        <TransactionForm 
+          transaction={editingTransaction || undefined}
+          onClose={() => {
+            setShowForm(false);
+            setEditingTransaction(null);
+          }}
+          onSubmit={() => {}}
+        />
+      )}
     </Card>
   );
 };

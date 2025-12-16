@@ -8,8 +8,6 @@ import NotFound from "./pages/NotFound";
 import { FinanceProvider } from "./context/FinanceContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import AddTransactionPage from "./pages/AddTransactionPage"; // Import the new page
-import Index from "./pages/Index"; // Import the Index page
 
 const queryClient = new QueryClient();
 
@@ -23,9 +21,8 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Index />} /> {/* Set Index as the root */}
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/add-transaction" element={<AddTransactionPage />} /> {/* New route */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
