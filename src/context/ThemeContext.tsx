@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark" | "system" | "cream"; // Added 'cream' theme
 type FontFamily = "Inter" | "Roboto" | "Open Sans" | "Lato" | "Montserrat" | "Times New Roman" | "System Default";
 
 interface ThemeContextType {
@@ -22,20 +22,19 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const [fontFamily, setFontFamily] = useState<FontFamily>(() => {
     const savedFont = localStorage.getItem("fontFamily") as FontFamily | null;
-    return savedFont || "Times New Roman"; // Changed default font to Times New Roman
+    return savedFont || "Times New Roman";
   });
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
     
     const root = document.documentElement;
+    root.classList.remove("light", "dark", "cream"); // Remove all theme classes first
     
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      root.classList.remove("light", "dark");
       root.classList.add(systemTheme);
     } else {
-      root.classList.remove("light", "dark");
       root.classList.add(theme);
     }
   }, [theme]);
@@ -45,7 +44,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const handleChange = () => {
       if (theme === "system") {
         const systemTheme = mediaQuery.matches ? "dark" : "light";
-        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.remove("light", "dark", "cream");
         document.documentElement.classList.add(systemTheme);
       }
     };

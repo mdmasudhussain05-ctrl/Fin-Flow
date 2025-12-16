@@ -15,11 +15,11 @@ import {
   BarChart3, 
   CreditCard, 
   User, 
-  Settings, // Added Settings icon
+  Settings, 
   Download,
   Scale,
-  Banknote, // Added Banknote icon for accounts
-  DollarSign, // Added for Currency Converter
+  Banknote, 
+  DollarSign, 
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import BalanceCard from "@/components/BalanceCard";
@@ -31,7 +31,7 @@ import ExpenseChart from "@/components/ExpenseChart";
 import IncomeExpenseChart from "@/components/IncomeExpenseChart";
 import { CardManager } from "@/components/CardManager";
 import { ExportManager } from "@/components/ExportManager";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "@/components/ThemeToggle"; // Keep import for now, but it won't be used for main theme selection
 import { ProfileSelector } from "@/components/ProfileSelector";
 import { useTheme } from "@/context/ThemeContext";
 import { useProfile } from "@/context/ProfileContext";
@@ -41,10 +41,10 @@ import FinancialStatements from "@/components/FinancialStatements";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { AccountManager } from "@/components/AccountManager";
-import CurrencyConverter from "@/pages/CurrencyConverter"; // Import the new page
+import CurrencyConverter from "@/pages/CurrencyConverter"; 
 
 const Dashboard = () => {
-  const { theme, fontFamily, setFontFamily } = useTheme(); // Get fontFamily and setFontFamily
+  const { theme, setTheme, fontFamily, setFontFamily } = useTheme(); 
   const { profiles, currentProfileId } = useProfile();
   const { baseCurrency, setBaseCurrency, exchangeRates } = useFinance();
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -55,7 +55,7 @@ const Dashboard = () => {
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "financial-statements", label: "Financial Statements", icon: Scale },
-    { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, // New menu item
+    { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, 
     { id: "cards", label: "Cards", icon: CreditCard },
     { id: "accounts", label: "Accounts", icon: Banknote },
     { id: "profile", label: "Profile", icon: User },
@@ -74,7 +74,14 @@ const Dashboard = () => {
     { value: "Open Sans", label: "Open Sans" },
     { value: "Lato", label: "Lato" },
     { value: "Montserrat", label: "Montserrat" },
-    { value: "Times New Roman", label: "Times New Roman" }, // Added Roman font
+    { value: "Times New Roman", label: "Times New Roman" }, 
+  ];
+
+  const themeOptions = [
+    { value: "system", label: "System" },
+    { value: "light", label: "Light" },
+    { value: "dark", label: "Dark" },
+    { value: "cream", label: "Cream" }, // New cream theme option
   ];
 
   const renderContent = () => {
@@ -113,7 +120,7 @@ const Dashboard = () => {
         );
       case "financial-statements":
         return <FinancialStatements />;
-      case "currency-converter": // New case for CurrencyConverter
+      case "currency-converter": 
         return <CurrencyConverter />;
       case "cards":
         return <CardManager />;
@@ -150,7 +157,18 @@ const Dashboard = () => {
                       <h3 className="font-medium text-gray-900 dark:text-white">Theme</h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Customize appearance</p>
                     </div>
-                    <ThemeToggle />
+                    <Select value={theme} onValueChange={(value) => setTheme(value as any)}>
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue placeholder="Select theme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {themeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
@@ -259,7 +277,19 @@ const Dashboard = () => {
             <h1 className="text-xl font-bold">FinFlow</h1>
           </div>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            {/* Theme selection for mobile */}
+            <Select value={theme} onValueChange={(value) => setTheme(value as any)}>
+              <SelectTrigger className="w-[100px] h-9">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                {themeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <ProfileSelector />
           </div>
         </div>
@@ -292,7 +322,19 @@ const Dashboard = () => {
           <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500 dark:text-gray-400">Theme</span>
-              <ThemeToggle />
+              {/* Theme selection for desktop sidebar */}
+              <Select value={theme} onValueChange={(value) => setTheme(value as any)}>
+                <SelectTrigger className="w-[100px] h-9">
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  {themeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
