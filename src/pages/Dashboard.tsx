@@ -20,48 +20,67 @@ import {
   Scale,
   Banknote, 
   DollarSign,
-  PlusCircle
+  PlusCircle,
+  BookText, // For Ledger Management
+  ReceiptText, // For Voucher Entry
+  Package, // For Inventory
+  Landmark, // For Banking
+  FileStack // For GST Compliance
 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
-import BalanceCard from "@/components/BalanceCard";
-import IncomeExpenseCards from "@/components/IncomeExpenseCards";
-import TransactionList from "@/components/TransactionList";
-import CategoryManager from "@/components/CategoryManager";
-import BillTracker from "@/components/BillTracker";
-import ExpenseChart from "@/components/ExpenseChart";
-import IncomeExpenseChart from "@/components/IncomeExpenseChart";
-import { CardManager } from "@/components/CardManager";
+import BalanceCard from "@/components/BalanceCard"; // Will be refactored
+import IncomeExpenseCards from "@/components/IncomeExpenseCards"; // Will be refactored
+import TransactionList from "@/components/TransactionList"; // Will be refactored
+import CategoryManager from "@/components/CategoryManager"; // Will be refactored
+import BillTracker from "@/components/BillTracker"; // Will be refactored
+import ExpenseChart from "@/components/ExpenseChart"; // Will be refactored
+import IncomeExpenseChart from "@/components/IncomeExpenseChart"; // Will be refactored
+import { CardManager } from "@/components/CardManager"; // Will be refactored
 import { ExportManager } from "@/components/ExportManager";
-import { ThemeToggle } from "@/components/ThemeToggle"; // Keep import for now, but it won't be used for main theme selection
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { ProfileSelector } from "@/components/ProfileSelector";
 import { useTheme } from "@/context/ThemeContext";
 import { useProfile } from "@/context/ProfileContext";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Changed from useFinance
 import { Card } from "@/components/ui/card";
-import FinancialStatements from "@/components/FinancialStatements";
+import FinancialStatements from "@/components/FinancialStatements"; // Will be refactored
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { AccountManager } from "@/components/AccountManager";
+import { AccountManager } from "@/components/AccountManager"; // Will be refactored
 import CurrencyConverter from "@/pages/CurrencyConverter"; 
-import AddTransaction from "@/pages/AddTransaction";
+import AddTransaction from "@/pages/AddTransaction"; // Will be refactored
+
+// Placeholder components for new modules
+const LedgerManagement = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Ledger Management Module (Coming Soon)</div>;
+const VoucherEntry = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Voucher Entry Module (Coming Soon)</div>;
+const InventoryManagement = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Inventory Management Module (Coming Soon)</div>;
+const Invoicing = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Invoicing & Automation Module (Coming Soon)</div>;
+const BankingReconciliation = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Banking & Reconciliation Module (Coming Soon)</div>;
+const GSTCompliance = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">GST & Statutory Compliance Module (Coming Soon)</div>;
+const AdminControls = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Administrative Controls Module (Coming Soon)</div>;
+
 
 const Dashboard = () => {
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme(); 
   const { profiles, currentProfileId } = useProfile();
-  const { baseCurrency, setBaseCurrency, exchangeRates } = useFinance();
+  const { baseCurrency, setBaseCurrency, exchangeRates } = useAccounting(); // Changed from useFinance
   const [activeSection, setActiveSection] = useState("dashboard");
   
   const currentProfile = profiles.find(p => p.id === currentProfileId);
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "add-transaction", label: "Add Transaction", icon: PlusCircle }, // New menu item
+    { id: "ledger-management", label: "Ledger Management", icon: BookText },
+    { id: "voucher-entry", label: "Voucher Entry", icon: ReceiptText },
+    { id: "inventory-management", label: "Inventory Management", icon: Package },
+    { id: "invoicing", label: "Invoicing", icon: ReceiptText }, // Changed from FileInvoice
+    { id: "banking-reconciliation", label: "Banking & Reconciliation", icon: Landmark },
+    { id: "gst-compliance", label: "GST & Compliance", icon: FileStack },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "financial-statements", label: "Financial Statements", icon: Scale },
     { id: "currency-converter", label: "Currency Converter", icon: DollarSign }, 
-    { id: "cards", label: "Cards", icon: CreditCard },
-    { id: "accounts", label: "Accounts", icon: Banknote },
     { id: "profile", label: "Profile", icon: User },
+    { id: "admin-controls", label: "Admin Controls", icon: Settings },
     { id: "export", label: "Export", icon: Download },
   ];
 
@@ -84,7 +103,7 @@ const Dashboard = () => {
     { value: "system", label: "System" },
     { value: "light", label: "Light" },
     { value: "dark", label: "Dark" },
-    { value: "cream", label: "Cream" }, // New cream theme option
+    { value: "cream", label: "Cream" },
   ];
 
   const renderContent = () => {
@@ -94,43 +113,53 @@ const Dashboard = () => {
           <>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
               <div className="lg:col-span-2 space-y-6">
-                <BalanceCard />
-                <IncomeExpenseCards />
-                <TransactionList />
+                <BalanceCard /> {/* Will be refactored */}
+                <IncomeExpenseCards /> {/* Will be refactored */}
+                <TransactionList /> {/* Will be refactored */}
               </div>
               
               <div className="space-y-6">
-                <ExpenseChart />
-                <IncomeExpenseChart />
+                <ExpenseChart /> {/* Will be refactored */}
+                <IncomeExpenseChart /> {/* Will be refactored */}
               </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <CategoryManager />
-              <BillTracker />
+              <CategoryManager /> {/* Will be refactored */}
+              <BillTracker /> {/* Will be refactored */}
             </div>
           </>
         );
-      case "add-transaction": // New case for the Add Transaction page
-        return <AddTransaction />;
+      case "ledger-management":
+        return <LedgerManagement />;
+      case "voucher-entry":
+        return <VoucherEntry />;
+      case "inventory-management":
+        return <InventoryManagement />;
+      case "invoicing":
+        return <Invoicing />;
+      case "banking-reconciliation":
+        return <BankingReconciliation />;
+      case "gst-compliance":
+        return <GSTCompliance />;
       case "analytics":
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ExpenseChart />
-              <IncomeExpenseChart />
+              <ExpenseChart /> {/* Will be refactored */}
+              <IncomeExpenseChart /> {/* Will be refactored */}
             </div>
-            <CategoryManager />
+            <CategoryManager /> {/* Will be refactored */}
           </div>
         );
       case "financial-statements":
-        return <FinancialStatements />;
+        return <FinancialStatements />; // Will be refactored
       case "currency-converter": 
         return <CurrencyConverter />;
       case "cards":
-        return <CardManager />;
+        return <CardManager />; // Will be refactored
       case "accounts":
-        return <AccountManager />;
+        return <AccountManager />; // Will be refactored
       case "profile":
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -223,6 +252,8 @@ const Dashboard = () => {
             </Card>
           </div>
         );
+      case "admin-controls":
+        return <AdminControls />;
       case "export":
         return <ExportManager />;
       default:

@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, FileText, FileBarChart } from "lucide-react";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { useProfile } from "@/context/ProfileContext";
 import { format } from "date-fns";
 
 export function ExportManager() {
-  const { transactions, bills, categories, baseCurrency } = useFinance();
+  const { transactions, bills, categories, baseCurrency } = useAccounting(); // Updated hook
   const { profiles, currentProfileId } = useProfile();
   const [isExporting, setIsExporting] = useState(false);
 

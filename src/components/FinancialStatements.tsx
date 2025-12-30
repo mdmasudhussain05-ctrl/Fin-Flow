@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting, LedgerAccount } from "@/context/AccountingContext"; // Updated import and added LedgerAccount type
 import { 
   format, 
   startOfMonth, 
@@ -37,7 +37,7 @@ const FinancialStatements = () => {
     baseCurrency, 
     convertAmount, 
     categories 
-  } = useFinance();
+  } = useAccounting(); // Updated hook
   
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(subMonths(today, 1)); // Default to last month
@@ -298,7 +298,7 @@ const FinancialStatements = () => {
               <h3 className="text-xl font-bold mb-4">Ledger Accounts ({periodLabel})</h3>
               {Object.keys(ledgerAccounts).length > 0 ? (
                 <div className="space-y-6">
-                  {Object.values(ledgerAccounts).map((account) => (
+                  {Object.values(ledgerAccounts).map((account: LedgerAccount) => (
                     <Card key={account.name}>
                       <CardHeader>
                         <CardTitle className="text-lg">{account.name}</CardTitle>

@@ -13,8 +13,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useFinance } from "@/context/FinanceContext";
-import { TransactionType } from "@/context/FinanceContext";
+import { useAccounting, TransactionType } from "@/context/AccountingContext"; // Updated import
 import { Plus, Wallet, Calendar, FileText, Tag, DollarSign, Banknote, ImageIcon } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 const AddTransaction = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { categories, accounts, addTransaction, baseCurrency, exchangeRates } = useFinance();
+  const { categories, ledgers: accounts, addTransaction, baseCurrency, exchangeRates } = useAccounting(); // Updated hook and aliased ledgers to accounts
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState("");

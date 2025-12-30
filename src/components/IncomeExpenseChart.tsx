@@ -12,11 +12,11 @@ import {
   Legend, 
   ResponsiveContainer 
 } from "recharts";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { TrendingUp } from "lucide-react";
 
 const IncomeExpenseChart = () => {
-  const { getTransactionsByMonth } = useFinance();
+  const { getTransactionsByMonth } = useAccounting(); // Updated hook
   const data = getTransactionsByMonth(6);
 
   const CustomTooltip = ({ active, payload, label }: any) => {

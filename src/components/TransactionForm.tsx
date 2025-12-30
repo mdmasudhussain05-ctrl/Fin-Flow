@@ -12,8 +12,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useFinance } from "@/context/FinanceContext";
-import { Transaction, TransactionType } from "@/context/FinanceContext";
+import { useAccounting, Transaction, TransactionType } from "@/context/AccountingContext"; // Updated import
 import { X, Wallet, Calendar, FileText, Tag, DollarSign, Banknote, ImageIcon } from "lucide-react"; // Added Banknote icon, ImageIcon
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 
@@ -24,7 +23,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm = ({ transaction, onClose, onSubmit }: TransactionFormProps) => {
-  const { categories, accounts, addTransaction, updateTransaction, baseCurrency, exchangeRates } = useFinance();
+  const { categories, ledgers: accounts, addTransaction, updateTransaction, baseCurrency, exchangeRates } = useAccounting(); // Updated hook and aliased ledgers to accounts
   const [amount, setAmount] = useState(transaction?.amount?.toString() || "");
   const [date, setDate] = useState(transaction?.date || new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState(transaction?.description || "");

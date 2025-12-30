@@ -2,11 +2,11 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 const IncomeExpenseCards = () => {
-  const { getMonthlyIncome, getMonthlyExpenses, baseCurrency } = useFinance();
+  const { getMonthlyIncome, getMonthlyExpenses, baseCurrency } = useAccounting(); // Updated hook
   const income = getMonthlyIncome();
   const expenses = getMonthlyExpenses();
 

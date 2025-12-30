@@ -12,13 +12,13 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { useFinance } from "@/context/FinanceContext";
-import { Bill } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { Bill } from "@/context/AccountingContext"; // Updated import
 import { Plus, Edit, Trash2, Save, X, Calendar, Bell } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 
 const BillTracker = () => {
-  const { bills, addBill, updateBill, deleteBill, baseCurrency } = useFinance();
+  const { bills, addBill, updateBill, deleteBill, baseCurrency } = useAccounting(); // Updated hook
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newBill, setNewBill] = useState({

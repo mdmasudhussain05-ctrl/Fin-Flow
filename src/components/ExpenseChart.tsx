@@ -3,11 +3,11 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { TrendingUp } from "lucide-react";
 
 const ExpenseChart = () => {
-  const { getExpensesByCategory } = useFinance();
+  const { getExpensesByCategory } = useAccounting(); // Updated hook
   const expenseData = getExpensesByCategory();
 
   const COLORS = [

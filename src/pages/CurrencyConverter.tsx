@@ -12,11 +12,11 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { DollarSign, ArrowRight, RefreshCw } from "lucide-react";
 
 const CurrencyConverter = () => {
-  const { exchangeRates, baseCurrency, convertAmount, setBaseCurrency } = useFinance();
+  const { exchangeRates, baseCurrency, convertAmount, setBaseCurrency } = useAccounting(); // Updated hook
   const [amountToConvert, setAmountToConvert] = useState<number>(1);
   const [fromCurrency, setFromCurrency] = useState<string>(baseCurrency);
   const [toCurrency, setToCurrency] = useState<string>("USD");

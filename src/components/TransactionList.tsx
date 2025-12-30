@@ -3,15 +3,14 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useFinance } from "@/context/FinanceContext";
-import { Transaction } from "@/context/FinanceContext";
+import { useAccounting, Transaction } from "@/context/AccountingContext"; // Updated import
 import { Plus, Edit, Trash2, Receipt, ImageIcon } from "lucide-react"; // Import ImageIcon
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 import TransactionForm from "@/components/TransactionForm";
 import { format } from "date-fns";
 
 const TransactionList = () => {
-  const { transactions, categories, accounts, deleteTransaction, baseCurrency, convertAmount } = useFinance();
+  const { transactions, categories, ledgers: accounts, deleteTransaction, baseCurrency, convertAmount } = useAccounting(); // Updated hook and aliased ledgers to accounts
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 

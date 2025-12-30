@@ -2,11 +2,11 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFinance } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
 import { Wallet } from "lucide-react";
 
 const BalanceCard = () => {
-  const { getTotalBalance, baseCurrency } = useFinance();
+  const { getTotalBalance, baseCurrency } = useAccounting(); // Updated hook
   const balance = getTotalBalance();
 
   return (

@@ -12,8 +12,8 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { useFinance } from "@/context/FinanceContext";
-import { Account } from "@/context/FinanceContext";
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { Ledger as Account } from "@/context/AccountingContext"; // Updated import and aliased Ledger to Account for existing usage
 import { Plus, Edit, Trash2, Save, X, Banknote, Wallet, CreditCard, Landmark, PiggyBank } from "lucide-react";
 
 const accountTypeOptions = [
@@ -25,14 +25,14 @@ const accountTypeOptions = [
 ];
 
 export function AccountManager() {
-  const { accounts, addAccount, updateAccount, deleteAccount, baseCurrency, exchangeRates } = useFinance();
+  const { ledgers: accounts, addLedger: addAccount, updateLedger: updateAccount, deleteLedger: deleteAccount, baseCurrency, exchangeRates } = useAccounting(); // Updated hook and aliased ledger functions
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Explicitly type newAccount to match Omit<Account, "id" | "profileId">
   const [newAccount, setNewAccount] = useState<Omit<Account, "id" | "profileId">>({
     name: "",
-    type: "cash",
+    accountGroupId: "ag-cash-in-hand", // Default to a relevant account group
     initialBalance: 0,
     currency: baseCurrency,
   });
@@ -40,7 +40,7 @@ export function AccountManager() {
   // Explicitly type editAccount to match Omit<Account, "id" | "profileId">
   const [editAccount, setEditAccount] = useState<Omit<Account, "id" | "profileId">>({
     name: "",
-    type: "cash", // Initial value, will be overwritten by startEditing
+    accountGroupId: "ag-cash-in-hand", // Initial value, will be overwritten by startEditing
     initialBalance: 0,
     currency: baseCurrency,
   });
@@ -55,7 +55,7 @@ export function AccountManager() {
       addAccount(newAccount);
       setNewAccount({
         name: "",
-        type: "cash",
+        accountGroupId: "ag-cash-in-hand",
         initialBalance: 0,
         currency: baseCurrency,
       });
@@ -74,15 +74,23 @@ export function AccountManager() {
     setEditingId(account.id);
     setEditAccount({
       name: account.name,
-      type: account.type,
+      accountGroupId: account.accountGroupId, // Use existing accountGroupId
       initialBalance: account.initialBalance,
       currency: account.currency,
     });
   };
 
-  const getAccountIcon = (type: string) => {
-    const option = accountTypeOptions.find(opt => opt.value === type);
-    return option ? <option.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" /> : <Banknote className="h-5 w-5 text-gray-600 dark:text-gray-400" />;
+  // Helper to map accountGroupId to a display type and icon
+  const getAccountDisplayType = (accountGroupId: string) => {
+    if (accountGroupId === "ag-cash-in-hand") return { type: "cash", icon: Wallet };
+    if (accountGroupId === "ag-bank-accounts") return { type: "bank", icon: Landmark };
+    // Default or more sophisticated mapping can be added here
+    return { type: "other", icon: Banknote };
+  };
+
+  const getAccountIcon = (accountGroupId: string) => {
+    const { icon: Icon } = getAccountDisplayType(accountGroupId);
+    return <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />;
   };
 
   return (
@@ -115,15 +123,19 @@ export function AccountManager() {
               <div>
                 <Label htmlFor="accountType">Account Type</Label>
                 <Select 
-                  value={newAccount.type} 
-                  onValueChange={(value: "cash" | "bank" | "credit_card" | "investment" | "other") => setNewAccount({...newAccount, type: value})}
+                  value={newAccount.accountGroupId} // Use accountGroupId
+                  onValueChange={(value: string) => setNewAccount({...newAccount, accountGroupId: value})}
                 >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {accountTypeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
+                      <SelectItem key={option.value} value={
+                        option.value === "cash" ? "ag-cash-in-hand" : 
+                        option.value === "bank" ? "ag-bank-accounts" : 
+                        "ag-current-assets" // Fallback or more specific groups
+                      }>
                         <div className="flex items-center">
                           <option.icon className="h-4 w-4 mr-2" />
                           {option.label}
@@ -197,15 +209,19 @@ export function AccountManager() {
                       placeholder="Account name"
                     />
                     <Select 
-                      value={editAccount.type} 
-                      onValueChange={(value: "cash" | "bank" | "credit_card" | "investment" | "other") => setEditAccount({...editAccount, type: value})}
+                      value={editAccount.accountGroupId} // Use accountGroupId
+                      onValueChange={(value: string) => setEditAccount({...editAccount, accountGroupId: value})}
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         {accountTypeOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem key={option.value} value={
+                            option.value === "cash" ? "ag-cash-in-hand" : 
+                            option.value === "bank" ? "ag-bank-accounts" : 
+                            "ag-current-assets" // Fallback or more specific groups
+                          }>
                             <div className="flex items-center">
                               <option.icon className="h-4 w-4 mr-2" />
                               {option.label}
@@ -240,11 +256,11 @@ export function AccountManager() {
                   <>
                     <div className="flex items-center space-x-3">
                       <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
-                        {getAccountIcon(account.type)}
+                        {getAccountIcon(account.accountGroupId)}
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{account.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{account.type.replace('_', ' ')}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{getAccountDisplayType(account.accountGroupId).type.replace('_', ' ')}</p>
                       </div>
                     </div>
                     
