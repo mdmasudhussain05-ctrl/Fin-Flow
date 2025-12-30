@@ -5,14 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAccounting } from "@/context/AccountingContext"; // Updated import
-import { Category } from "@/types/accounting"; // Updated import
+import { useAccounting } from "@/context/AccountingContext";
+import { Category } from "@/types/accounting";
 import { Plus, Edit, Trash2, Save, X, Tag as TagIcon, ImageIcon } from "lucide-react"; // Renamed Tag to TagIcon to avoid conflict
-import *s LucideIcons from "lucide-react"; // Import all Lucide icons
+import * as LucideIcons from "lucide-react"; // Corrected: 'import *s' changed to 'import * as'
 import { IconPicker } from "./IconPicker"; // Import the new IconPicker
 
 const CategoryManager = () => {
-  const { categories, addCategory, updateCategory, deleteCategory } = useAccounting(); // Updated hook
+  const { categories, addCategory, updateCategory, deleteCategory } = useAccounting();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState({ name: "", color: "bg-blue-500", icon: "Tag" });
