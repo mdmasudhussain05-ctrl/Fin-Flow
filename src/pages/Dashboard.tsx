@@ -49,9 +49,9 @@ import { Label } from "@/components/ui/label";
 import { AccountManager } from "@/components/AccountManager"; // Will be refactored
 import CurrencyConverter from "@/pages/CurrencyConverter"; 
 import AddTransaction from "@/pages/AddTransaction"; // Will be refactored
+import { LedgerManagement } from "@/components/LedgerManagement"; // Import LedgerManagement
 
 // Placeholder components for new modules
-const LedgerManagement = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Ledger Management Module (Coming Soon)</div>;
 const VoucherEntry = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Voucher Entry Module (Coming Soon)</div>;
 const InventoryManagement = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Inventory Management Module (Coming Soon)</div>;
 const Invoicing = () => <div className="p-6 text-center text-gray-500 dark:text-gray-400">Invoicing & Automation Module (Coming Soon)</div>;
