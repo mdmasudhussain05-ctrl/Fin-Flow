@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAccounting, LedgerAccount } from "@/context/AccountingContext"; // Updated import and added LedgerAccount type
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { LedgerAccount } from "@/types/accounting"; // Updated import and added LedgerAccount type
 import { 
   format, 
   startOfMonth, 

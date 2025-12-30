@@ -12,7 +12,8 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useAccounting, Transaction, TransactionType } from "@/context/AccountingContext"; // Updated import
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { Transaction, TransactionType } from "@/types/accounting"; // Updated import
 import { X, Wallet, Calendar, FileText, Tag, DollarSign, Banknote, ImageIcon } from "lucide-react"; // Added Banknote icon, ImageIcon
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 

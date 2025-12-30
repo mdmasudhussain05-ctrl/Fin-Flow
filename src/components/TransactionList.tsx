@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAccounting, Transaction } from "@/context/AccountingContext"; // Updated import
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { Transaction } from "@/types/accounting"; // Updated import
 import { Plus, Edit, Trash2, Receipt, ImageIcon } from "lucide-react"; // Import ImageIcon
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons
 import TransactionForm from "@/components/TransactionForm";

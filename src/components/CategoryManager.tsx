@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccounting } from "@/context/AccountingContext"; // Updated import
-import { Category } from "@/context/AccountingContext"; // Updated import
+import { Category } from "@/types/accounting"; // Updated import
 import { Plus, Edit, Trash2, Save, X, Tag as TagIcon, ImageIcon } from "lucide-react"; // Renamed Tag to TagIcon to avoid conflict
-import * as LucideIcons from "lucide-react"; // Import all Lucide icons
+import *s LucideIcons from "lucide-react"; // Import all Lucide icons
 import { IconPicker } from "./IconPicker"; // Import the new IconPicker
 
 const CategoryManager = () => {

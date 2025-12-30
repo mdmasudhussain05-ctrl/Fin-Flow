@@ -13,7 +13,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { useAccounting } from "@/context/AccountingContext"; // Updated import
-import { Bill } from "@/context/AccountingContext"; // Updated import
+import { Bill } from "@/types/accounting"; // Updated import
 import { Plus, Edit, Trash2, Save, X, Calendar, Bell } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 

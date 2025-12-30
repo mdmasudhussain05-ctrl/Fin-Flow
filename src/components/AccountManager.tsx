@@ -13,7 +13,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { useAccounting } from "@/context/AccountingContext"; // Updated import
-import { Ledger as Account } from "@/context/AccountingContext"; // Updated import and aliased Ledger to Account for existing usage
+import { Ledger as Account } from "@/types/accounting"; // Updated import and aliased Ledger to Account for existing usage
 import { Plus, Edit, Trash2, Save, X, Banknote, Wallet, CreditCard, Landmark, PiggyBank } from "lucide-react";
 
 const accountTypeOptions = [

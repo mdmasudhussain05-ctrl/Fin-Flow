@@ -13,9 +13,10 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useAccounting, TransactionType } from "@/context/AccountingContext"; // Updated import
+import { useAccounting } from "@/context/AccountingContext"; // Updated import
+import { TransactionType } from "@/types/accounting"; // Updated import
 import { Plus, Wallet, Calendar, FileText, Tag, DollarSign, Banknote, ImageIcon } from "lucide-react";
-import * as LucideIcons from "lucide-react";
+import *as LucideIcons from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
